@@ -6,7 +6,8 @@
         android:id="@+id/action_add"
         android:title="@string/menu_add"
         android:icon="@drawable/ic_add_white_24dp"
-        app:showAsAction="ifRoom|withText" />
+        app:showAsAction="ifRoom|withText"
+        android:visible="false"/>
 
     <item
         android:id="@+id/media_route_menu_item"

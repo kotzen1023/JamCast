@@ -37,6 +37,7 @@ public class ActionBarCastActivity extends AppCompatActivity {
     private CastContext mCastContext;
     private MenuItem mMediaRouteMenuItem;
     private Toolbar mToolbar;
+    private Menu mMenu;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
 
@@ -241,6 +242,8 @@ public class ActionBarCastActivity extends AppCompatActivity {
         }
         mToolbar.inflateMenu(R.menu.main);
 
+
+
         mDrawerLayout = findViewById(R.id.drawer_layout);
         if (mDrawerLayout != null) {
             NavigationView navigationView = findViewById(R.id.nav_view);
@@ -264,6 +267,47 @@ public class ActionBarCastActivity extends AppCompatActivity {
         mToolbarInitialized = true;
 
         Log.d(TAG, "initializeToolbar end");
+    }
+
+    protected void initializeToolbarMusicList() {
+
+        Log.d(TAG, "initializeToolbarMusicList start");
+
+        mToolbar = findViewById(R.id.toolbar);
+        if (mToolbar == null) {
+            throw new IllegalStateException("Layout is required to include a Toolbar with id " +
+                    "'toolbar'");
+        }
+        mToolbar.inflateMenu(R.menu.main);
+
+        mMenu = mToolbar.getMenu();
+
+        MenuItem menuItemAdd = mMenu.findItem(R.id.action_add);
+        menuItemAdd.setVisible(true);
+
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        if (mDrawerLayout != null) {
+            NavigationView navigationView = findViewById(R.id.nav_view);
+            if (navigationView == null) {
+                throw new IllegalStateException("Layout requires a NavigationView " +
+                        "with id 'nav_view'");
+            }
+
+            // Create an ActionBarDrawerToggle that will handle opening/closing of the drawer:
+            mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                    mToolbar, R.string.open_content_drawer, R.string.close_content_drawer);
+            mDrawerLayout.setDrawerListener(mDrawerListener);
+
+            populateDrawerItems(navigationView);
+            setSupportActionBar(mToolbar);
+            updateDrawerToggle();
+        } else {
+            setSupportActionBar(mToolbar);
+        }
+
+        mToolbarInitialized = true;
+
+        Log.d(TAG, "initializeToolbarMusicList end");
     }
 
     private void populateDrawerItems(NavigationView navigationView) {
