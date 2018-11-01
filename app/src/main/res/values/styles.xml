@@ -1,0 +1,47 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="JamCastAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#4FC3F7</item>
+        <item name="colorPrimaryDark">#0277BD</item>
+        <item name="colorAccent">#4FC3F7</item>
+        <item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>
+    </style>
+
+
+    <style name="CarTheme" parent="JamCastAppTheme">
+        <!-- colorPrimaryDark is currently used in Android Auto for:
+             - App background
+             - Drawer right side ("more" custom actions) background
+             - Notification icon badge tinting
+             - Overview “now playing” icon tinting
+         -->
+        <item name="colorPrimaryDark">#0277BD</item>
+
+        <!-- colorAccent is used in Android Auto for:
+             - Spinner
+             - progress bar
+             - floating action button background (Play/Pause in media apps)
+         -->
+        <item name="colorAccent">@color/bt_accent</item>
+    </style>
+
+    <style name="WearTheme" parent="JamCastAppTheme">
+        <!-- colorPrimaryDark is currently used on Android Wear for:
+             - Card background on media browse
+             - Card background on 4-way media controls
+         -->
+        <item name="colorPrimaryDark">#0277BD</item>
+    </style>
+
+
+    <style name="Theme.UAmp.TVLeanback" parent="Theme.Leanback">
+    </style>
+</resources>
