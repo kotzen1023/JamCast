@@ -38,12 +38,14 @@ public class ActionBarCastActivity extends AppCompatActivity {
     private MenuItem mMediaRouteMenuItem;
     private Toolbar mToolbar;
     private Menu mMenu;
+    public static MenuItem menuItemAdd;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
 
     private boolean mToolbarInitialized;
 
     private int mItemToOpenWhenDrawerCloses = -1;
+    private int activity_called = 0;
 
     private CastStateListener mCastStateListener = new CastStateListener() {
         @Override
@@ -74,6 +76,7 @@ public class ActionBarCastActivity extends AppCompatActivity {
                 switch (mItemToOpenWhenDrawerCloses) {
                     case R.id.navigation_allmusic:
                         activityClass = MusicPlayerActivity.class;
+
                         break;
                     case R.id.navigation_playlists:
                         activityClass = PlaceholderActivity.class;
@@ -180,12 +183,32 @@ public class ActionBarCastActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
+
+        Log.d(TAG, "onCreateOptionsMenu start");
+
         getMenuInflater().inflate(R.menu.main, menu);
 
         if (mCastContext != null) {
             mMediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(),
                     menu, R.id.media_route_menu_item);
         }
+
+        menuItemAdd = menu.findItem(R.id.action_add);
+        switch (activity_called) {
+            case 0:
+                menuItemAdd.setVisible(false);
+                break;
+            case 1:
+                menuItemAdd.setVisible(false);
+                break;
+            case 2:
+                menuItemAdd.setVisible(true);
+                break;
+        }
+
+
+        Log.d(TAG, "onCreateOptionsMenu end");
+
         return true;
     }
 
@@ -199,6 +222,14 @@ public class ActionBarCastActivity extends AppCompatActivity {
             onBackPressed();
             return true;
         }
+
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                Log.e(TAG, "action_add click");
+                break;
+
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -231,9 +262,11 @@ public class ActionBarCastActivity extends AppCompatActivity {
         mToolbar.setTitle(titleId);
     }
 
-    protected void initializeToolbar() {
+    protected void initializeToolbar(int activity_id) {
 
         Log.d(TAG, "initializeToolbar start");
+
+        activity_called = activity_id;
 
         mToolbar = findViewById(R.id.toolbar);
         if (mToolbar == null) {
@@ -241,7 +274,6 @@ public class ActionBarCastActivity extends AppCompatActivity {
                     "'toolbar'");
         }
         mToolbar.inflateMenu(R.menu.main);
-
 
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -274,16 +306,15 @@ public class ActionBarCastActivity extends AppCompatActivity {
         Log.d(TAG, "initializeToolbarMusicList start");
 
         mToolbar = findViewById(R.id.toolbar);
+
         if (mToolbar == null) {
             throw new IllegalStateException("Layout is required to include a Toolbar with id " +
                     "'toolbar'");
         }
         mToolbar.inflateMenu(R.menu.main);
 
-        mMenu = mToolbar.getMenu();
 
-        MenuItem menuItemAdd = mMenu.findItem(R.id.action_add);
-        menuItemAdd.setVisible(true);
+
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         if (mDrawerLayout != null) {

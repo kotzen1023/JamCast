@@ -1,10 +1,14 @@
 package com.seventhmoon.jamcast.ui;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.MediaBrowserCompat;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,22 +25,28 @@ import java.util.ArrayList;
 public class MusicListFragment extends Fragment {
     private static final String TAG = LogHelper.makeLogTag(MusicListFragment.class);
 
+    private Context fragmentContext;
+
+    private static BroadcastReceiver mReceiver = null;
+    private static boolean isRegister = false;
+
+
+
     private MusicListFragmentListener mMusicListFragmentListener;
     private BrowseAdapter mBrowserAdapter;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        // If used on an activity that doesn't implement MediaFragmentListener, it
-        // will throw an exception as expected:
-        mMusicListFragmentListener = (MusicListFragment.MusicListFragmentListener) activity;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        fragmentContext = getContext();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         LogHelper.d(TAG, "fragment.onCreateView");
-        View rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        View rootView = inflater.inflate(R.layout.music_list_fragment, container, false);
 
         //mErrorView = rootView.findViewById(R.id.playback_error);
         //mErrorMessage = (TextView) mErrorView.findViewById(R.id.error_message);
@@ -55,6 +65,23 @@ public class MusicListFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        Log.i(TAG, "onDestroyView");
+
+        if (isRegister && mReceiver != null) {
+            try {
+                fragmentContext.unregisterReceiver(mReceiver);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            isRegister = false;
+            mReceiver = null;
+        }
+
+        super.onDestroyView();
     }
 
     // An adapter for showing the list of browsed MediaItem's

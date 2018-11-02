@@ -18,6 +18,8 @@ public class MusicListActivity extends BaseActivity {
 
 
         setContentView(R.layout.activity_music_list);
-        initializeToolbarMusicList();
+        initializeToolbar(2);
+
+
     }
 }
