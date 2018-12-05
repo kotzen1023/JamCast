@@ -17,6 +17,7 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -105,6 +106,9 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(TAG, "onCreate");
+
         setContentView(R.layout.activity_full_player);
         initializeToolbar(0);
         if (getSupportActionBar() != null) {
@@ -112,19 +116,19 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
             getSupportActionBar().setTitle("");
         }
 
-        mBackgroundImage = (ImageView) findViewById(R.id.background_image);
+        mBackgroundImage = findViewById(R.id.background_image);
         mPauseDrawable = ContextCompat.getDrawable(this, R.drawable.uamp_ic_pause_white_48dp);
         mPlayDrawable = ContextCompat.getDrawable(this, R.drawable.uamp_ic_play_arrow_white_48dp);
-        mPlayPause = (ImageView) findViewById(R.id.play_pause);
-        mSkipNext = (ImageView) findViewById(R.id.next);
-        mSkipPrev = (ImageView) findViewById(R.id.prev);
-        mStart = (TextView) findViewById(R.id.startText);
-        mEnd = (TextView) findViewById(R.id.endText);
-        mSeekbar = (SeekBar) findViewById(R.id.seekBar1);
-        mLine1 = (TextView) findViewById(R.id.line1);
-        mLine2 = (TextView) findViewById(R.id.line2);
-        mLine3 = (TextView) findViewById(R.id.line3);
-        mLoading = (ProgressBar) findViewById(R.id.progressBar1);
+        mPlayPause = findViewById(R.id.play_pause);
+        mSkipNext = findViewById(R.id.next);
+        mSkipPrev = findViewById(R.id.prev);
+        mStart = findViewById(R.id.startText);
+        mEnd = findViewById(R.id.endText);
+        mSeekbar = findViewById(R.id.seekBar1);
+        mLine1 = findViewById(R.id.line1);
+        mLine2 = findViewById(R.id.line2);
+        mLine3 = findViewById(R.id.line3);
+        mLoading = findViewById(R.id.progressBar1);
         mControllers = findViewById(R.id.controllers);
 
         mSkipNext.setOnClickListener(new View.OnClickListener() {

@@ -12,11 +12,12 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.seventhmoon.jamcast.R;
+import com.seventhmoon.jamcast.utils.LogHelper;
 
 public class MusicPlayerActivity extends BaseActivity
         implements MediaBrowserFragment.MediaFragmentListener {
 
-    private static final String TAG = MusicPlayerActivity.class.getName();
+    private static final String TAG = LogHelper.makeLogTag(MusicPlayerActivity.class);
     private static final String SAVED_MEDIA_ID="com.seventhmoon.android.jamcast.MEDIA_ID";
     private static final String FRAGMENT_TAG = "jamcast_list_container";
 
@@ -36,7 +37,7 @@ public class MusicPlayerActivity extends BaseActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "Activity onCreate");
+        LogHelper.d(TAG, "MusicPlayerActivity onCreate");
 
         setContentView(R.layout.activity_player);
 
@@ -45,9 +46,18 @@ public class MusicPlayerActivity extends BaseActivity
 
         // Only check if a full screen player is needed on the first time:
         if (savedInstanceState == null) {
-            Log.d(TAG, "startFullScreenActivityIfNeeded");
+            Log.d(TAG, "savedInstanceState = null");
             startFullScreenActivityIfNeeded(getIntent());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        LogHelper.d(TAG, "MusicPlayerActivity onDestroy");
+
+
+
+        super.onDestroy();
     }
 
     @Override
@@ -75,7 +85,7 @@ public class MusicPlayerActivity extends BaseActivity
 
     @Override
     public void setToolbarTitle(CharSequence title) {
-        Log.d(TAG, "Setting toolbar title to "+ title);
+        LogHelper.d(TAG, "Setting toolbar title to "+ title);
         if (title == null) {
             title = getString(R.string.app_name);
         }
@@ -90,7 +100,9 @@ public class MusicPlayerActivity extends BaseActivity
     }
 
     private void startFullScreenActivityIfNeeded(Intent intent) {
+        Log.e(TAG, "startFullScreenActivityIfNeeded");
         if (intent != null && intent.getBooleanExtra(EXTRA_START_FULLSCREEN, false)) {
+            Log.e(TAG, "start FullScreenPlayerActivity");
             Intent fullScreenIntent = new Intent(this, FullScreenPlayerActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP |
                             Intent.FLAG_ACTIVITY_CLEAR_TOP)

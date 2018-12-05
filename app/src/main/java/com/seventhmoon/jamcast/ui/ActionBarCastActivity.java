@@ -121,7 +121,7 @@ public class ActionBarCastActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogHelper.d(TAG, "Activity onCreate");
+        Log.e(TAG, "ActionBarCastActivity onCreate");
 
         int playServicesAvailable =
                 GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
@@ -129,6 +129,15 @@ public class ActionBarCastActivity extends AppCompatActivity {
         if (playServicesAvailable == ConnectionResult.SUCCESS) {
             mCastContext = CastContext.getSharedInstance(this);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e(TAG, "ActionBarCastActivity onDestroy");
+
+
+
+        super.onDestroy();
     }
 
     @Override
@@ -264,7 +273,7 @@ public class ActionBarCastActivity extends AppCompatActivity {
 
     protected void initializeToolbar(int activity_id) {
 
-        Log.d(TAG, "initializeToolbar start");
+        LogHelper.d(TAG, "initializeToolbar start");
 
         activity_called = activity_id;
 
@@ -298,48 +307,10 @@ public class ActionBarCastActivity extends AppCompatActivity {
 
         mToolbarInitialized = true;
 
-        Log.d(TAG, "initializeToolbar end");
+        LogHelper.d(TAG, "initializeToolbar end");
     }
 
-    protected void initializeToolbarMusicList() {
 
-        Log.d(TAG, "initializeToolbarMusicList start");
-
-        mToolbar = findViewById(R.id.toolbar);
-
-        if (mToolbar == null) {
-            throw new IllegalStateException("Layout is required to include a Toolbar with id " +
-                    "'toolbar'");
-        }
-        mToolbar.inflateMenu(R.menu.main);
-
-
-
-
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        if (mDrawerLayout != null) {
-            NavigationView navigationView = findViewById(R.id.nav_view);
-            if (navigationView == null) {
-                throw new IllegalStateException("Layout requires a NavigationView " +
-                        "with id 'nav_view'");
-            }
-
-            // Create an ActionBarDrawerToggle that will handle opening/closing of the drawer:
-            mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                    mToolbar, R.string.open_content_drawer, R.string.close_content_drawer);
-            mDrawerLayout.setDrawerListener(mDrawerListener);
-
-            populateDrawerItems(navigationView);
-            setSupportActionBar(mToolbar);
-            updateDrawerToggle();
-        } else {
-            setSupportActionBar(mToolbar);
-        }
-
-        mToolbarInitialized = true;
-
-        Log.d(TAG, "initializeToolbarMusicList end");
-    }
 
     private void populateDrawerItems(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
