@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/playback_error"
+        android:id="@+id/music_list_playback_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -13,7 +13,7 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/error_message"
+            android:id="@+id/music_list_error_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/error_message_background"
