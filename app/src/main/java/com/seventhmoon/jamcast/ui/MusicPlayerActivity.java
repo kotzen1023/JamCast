@@ -1,25 +1,41 @@
 package com.seventhmoon.jamcast.ui;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.seventhmoon.jamcast.R;
 import com.seventhmoon.jamcast.utils.LogHelper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.seventhmoon.jamcast.data.FileOperation.init_folder_and_files;
 
 public class MusicPlayerActivity extends BaseActivity
         implements MediaBrowserFragment.MediaFragmentListener {
 
     private static final String TAG = LogHelper.makeLogTag(MusicPlayerActivity.class);
     private static final String SAVED_MEDIA_ID="com.seventhmoon.android.jamcast.MEDIA_ID";
-    private static final String FRAGMENT_TAG = "jamcast_list_container";
+    private static final String FRAGMENT_TAG = "music_list_container";
 
     public static final String EXTRA_START_FULLSCREEN =
             "com.seventhmoon.android.jamcast.EXTRA_START_FULLSCREEN";
@@ -31,6 +47,8 @@ public class MusicPlayerActivity extends BaseActivity
      */
     public static final String EXTRA_CURRENT_MEDIA_DESCRIPTION =
             "com.seventhmoon.android.jamcast.CURRENT_MEDIA_DESCRIPTION";
+
+
 
     private Bundle mVoiceSearchParams;
 
@@ -44,11 +62,15 @@ public class MusicPlayerActivity extends BaseActivity
         initializeToolbar(0);
         initializeFromParams(savedInstanceState, getIntent());
 
+
+
         // Only check if a full screen player is needed on the first time:
         if (savedInstanceState == null) {
             Log.d(TAG, "savedInstanceState = null");
             startFullScreenActivityIfNeeded(getIntent());
         }
+
+
     }
 
     @Override
@@ -177,4 +199,7 @@ public class MusicPlayerActivity extends BaseActivity
         }
         getBrowseFragment().onConnected();
     }
+
+
+
 }

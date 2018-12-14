@@ -1,26 +1,32 @@
 package com.seventhmoon.jamcast.ui;
 
+import android.support.v4.app.Fragment;
+//import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.media.MediaBrowserCompat;
-import android.support.v4.media.session.MediaControllerCompat;
+
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.widget.Button;
+import android.widget.ListView;
 
 import com.seventhmoon.jamcast.R;
-import com.seventhmoon.jamcast.data.Song;
+import com.seventhmoon.jamcast.data.FileChooseArrayAdapter;
 import com.seventhmoon.jamcast.utils.LogHelper;
 
-import java.util.ArrayList;
+import java.io.File;
 
-public class MusicListActivity extends BaseActivity  {
+public class FileChooseListActivity extends BaseActivity {
 
-    private static final String TAG = LogHelper.makeLogTag(MusicListActivity.class);
+    private static final String TAG = LogHelper.makeLogTag(FileChooseListActivity.class);
     private static final String SAVED_MEDIA_ID="com.seventhmoon.android.jamcast.MEDIA_ID";
-    private static final String FRAGMENT_TAG = "jamcast_musiclist_container";
+    private static final String FRAGMENT_TAG = "file_list_container";
     public static final String EXTRA_START_FULLSCREEN =
             "com.seventhmoon.android.jamcast.EXTRA_START_FULLSCREEN";
 
@@ -29,10 +35,19 @@ public class MusicListActivity extends BaseActivity  {
 
     private Bundle mVoiceSearchParams;
 
-    public static ArrayList<Song> songList = new ArrayList<>();
-    //for add songs to list
-    public static ArrayList<String> searchList = new ArrayList<>();
-    public static ArrayList<Song> addSongList = new ArrayList<>();
+    public static boolean FileChooseLongClick = false;
+    public static boolean FileChooseSelectAll = false;
+
+    //private Context context;
+
+
+    public ListView listView;
+    public static Button confirm;
+    private File currentDir;
+    private Menu actionmenu;
+
+    private static BroadcastReceiver mReceiver = null;
+    private static boolean isRegister = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,9 +55,11 @@ public class MusicListActivity extends BaseActivity  {
         LogHelper.e(TAG, "MusicListActivity onCreate");
 
 
-        setContentView(R.layout.activity_music_list);
-        initializeToolbar(2);
+        setContentView(R.layout.activity_file_choose);
+        initializeToolbar(3);
         initializeFromParams(savedInstanceState, getIntent());
+
+        listView = findViewById(R.id.listViewFileChoose);
 
         // Only check if a full screen player is needed on the first time:
         /*if (savedInstanceState == null) {
@@ -62,10 +79,10 @@ public class MusicListActivity extends BaseActivity  {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        String mediaId = getMediaId();
-        if (mediaId != null) {
-            outState.putString(SAVED_MEDIA_ID, mediaId);
-        }
+        //String mediaId = getMediaId();
+        //if (mediaId != null) {
+        //    outState.putString(SAVED_MEDIA_ID, mediaId);
+        //}
         super.onSaveInstanceState(outState);
     }
 
@@ -124,41 +141,94 @@ public class MusicListActivity extends BaseActivity  {
                 mediaId = savedInstanceState.getString(SAVED_MEDIA_ID);
             }
         }
-        //navigateToBrowser(mediaId);
+        navigateToBrowser();
     }
 
-    private void navigateToBrowser(String mediaId) {
-        Log.d(TAG, "navigateToBrowser, mediaId=" + mediaId);
-        MediaBrowserFragment fragment = getBrowseFragment();
+    private void navigateToBrowser() {
+        Log.d(TAG, "navigateToBrowser");
 
-        if (fragment == null || !TextUtils.equals(fragment.getMediaId(), mediaId)) {
-            fragment = new MediaBrowserFragment();
-            fragment.setMediaId(mediaId);
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        //FileChooseBrowserFragment fragment = getFileChooseBrowserFragment();
+
+        Fragment fragment = null;
+        Class fragmentClass=null;
+
+        fragmentClass = FileChooseBrowserFragment.class;
+
+        if (fragmentClass != null) {
+
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                Log.e(TAG, "Exception");
+                e.printStackTrace();
+            }
+
+            // Insert the fragment by replacing any existing fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            //fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.file_list_container, fragment).commitAllowingStateLoss();
+
+            //fragment = new FileChooseBrowserFragment();
+            //fragment.setMediaId(mediaId);
+            //FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            //transaction.replace(R.id.container, (Fragment)fragment).commitAllowingStateLoss();
+            //transaction.setCustomAnimations(
+            //        R.animator.slide_in_from_right, R.animator.slide_out_to_left,
+            //       R.animator.slide_in_from_left, R.animator.slide_out_to_right);
+            //transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
+            // If this is not the top level media (root), we add it to the fragment back stack,
+            // so that actionbar toggle and Back will work appropriately:
+            //if (mediaId != null) {
+            //    transaction.addToBackStack(null);
+            //}
+            //transaction.commit();
+        }
+
+
+        /*Fragment fragment = null;
+        Class fragmentClass=null;
+
+        fragmentClass = FileChooseBrowserFragment.class;
+
+        if (fragmentClass != null ) {
+
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //fragment = new FileChooseBrowserFragment();
+            //fragment.setMediaId(mediaId);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+
             transaction.setCustomAnimations(
                     R.animator.slide_in_from_right, R.animator.slide_out_to_left,
                     R.animator.slide_in_from_left, R.animator.slide_out_to_right);
-            transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
+
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).commitAllowingStateLoss();
+
+            //replace(R.id.flContent, fragment).commitAllowingStateLoss();
             // If this is not the top level media (root), we add it to the fragment back stack,
             // so that actionbar toggle and Back will work appropriately:
-            if (mediaId != null) {
-                transaction.addToBackStack(null);
-            }
+            //if (mediaId != null) {
+            //    transaction.addToBackStack(null);
+            //}
             transaction.commit();
-        }
+        }*/
     }
 
-    public String getMediaId() {
-        MediaBrowserFragment fragment = getBrowseFragment();
-        if (fragment == null) {
-            return null;
-        }
-        return fragment.getMediaId();
+    private FileChooseBrowserFragment getFileChooseBrowserFragment() {
+
+        //getSupportFragmentManager().findFragmentById(R.id.file_list_container);
+
+        //return  getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        return (FileChooseBrowserFragment) getSupportFragmentManager().findFragmentById(R.id.file_list_container);
     }
 
-    private MediaBrowserFragment getBrowseFragment() {
-        return (MediaBrowserFragment) getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-    }
+
 
     /*@Override
     public void onMediaItemSelected(MediaBrowserCompat.MediaItem item) {

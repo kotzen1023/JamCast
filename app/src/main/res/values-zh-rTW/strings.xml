@@ -49,28 +49,28 @@
     <string name="label_next">Next</string>
     
     <!-- menu -->
-    <string name="menu_add">Add</string>
+    <string name="menu_add">新增</string>
 
-    <string name="play_mode_all">All</string>
-    <string name="play_mode_shuffle">Shuffle</string>
-    <string name="play_mode_repeat">Single Repeat</string>
-    <string name="play_mode_ab_loop">AB Loop</string>
-    <string name="select_all">Select All</string>
-    <string name="unselect_all">Unselect All</string>
-    <string name="add_to_list">Add to play list</string>
-    <string name="remove_select">Remove from list</string>
-    <string name="confirm">Ok</string>
-    <string name="cancel">Cancel</string>
-    <string name="remove_file_from_list">Remove \n%s \nfrom this list?　(Would not delete this file)</string>
-    <string name="volume_control">Volume</string>
-    <string name="clear_all">Clear all</string>
-    <string name="clear_list_all">Clear all of this list? (Would not delete these file)</string>
-    <string name="invalid_input">Invalid input!</string>
-    <string name="range_invalid">Range is invalid</string>
-    <string name="mark_a">Mark A</string>
-    <string name="mark_b">Mark B</string>
-    <string name="must_be_less_than_song_duration">must be less than song duration</string>
-    <string name="song_list_empty">Song list is empty</string>
-    <string name="list_empty">Play list is empty. Try to use \"add\" button to add songs to your list!</string>
-    <string name="play_mode_video">Video</string>
+    <string name="play_mode_all">全部撥放</string>
+    <string name="play_mode_shuffle">隨機撥放</string>
+    <string name="play_mode_repeat">單一重複</string>
+    <string name="play_mode_ab_loop">AB段循環</string>
+    <string name="select_all">全選</string>
+    <string name="unselect_all">全不選</string>
+    <string name="add_to_list">加入播放清單</string>
+    <string name="remove_select">從清單移除</string>
+    <string name="confirm">確定</string>
+    <string name="cancel">取消</string>
+    <string name="remove_file_from_list">將\n %s \n從清單移除?　(不會刪除檔案)</string>
+    <string name="volume_control">音量</string>
+    <string name="clear_all">清除全部</string>
+    <string name="clear_list_all">清除此播放清單? (不會刪除檔案)</string>
+    <string name="invalid_input">輸入錯誤!</string>
+    <string name="range_invalid">範圍錯誤</string>
+    <string name="mark_a">標記A</string>
+    <string name="mark_b">標記B</string>
+    <string name="must_be_less_than_song_duration">必須小於歌曲時間</string>
+    <string name="song_list_empty">播放清單為空</string>
+    <string name="list_empty">播放清單為空. 試著按下\"新增\"按鈕來增加歌曲到你的播放清單!</string>
+    <string name="play_mode_video">影片</string>
 </resources>

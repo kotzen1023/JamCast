@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent">
+    <ImageView
+        android:id="@+id/songIcon"
+        android:layout_width="60dip"
+        android:layout_height="60dip" >
+    </ImageView>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView android:text="test"
+            android:id="@+id/songName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:marqueeRepeatLimit="marquee_forever">
+        </TextView>
+
+        <TextView
+            android:id="@+id/songTime"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_weight="4"/>
+
+        <!--CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text=""
+            android:id="@+id/checkBoxInRow"
+            android:layout_gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:layout_weight="8" /-->
+
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

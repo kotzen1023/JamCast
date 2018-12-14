@@ -10,6 +10,13 @@
         android:visible="false"/>
 
     <item
+        android:id="@+id/action_selectAll"
+        android:title="@string/select_all"
+        android:icon="@drawable/ic_select_all_white_24dp"
+        app:showAsAction="ifRoom|withText"
+        android:visible="false"/>
+
+    <item
         android:id="@+id/media_route_menu_item"
         android:title="@string/media_route_menu_title"
         app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
