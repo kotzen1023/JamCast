@@ -19,6 +19,6 @@ public class Constants {
         String FILE_CHOOSE_CONFIRM_BUTTON_SHOW = "com.seventhmoon.JamCast.FileChooseConfirmButtonShow";
         String FILE_CHOOSE_CONFIRM_BUTTON_HIDE = "com.seventhmoon.JamCast.FileChooseConfirmButtonHide";
 
-
+        String FILE_CHOOSE_PATH_CHANGE = "com.seventhmoon.JamCast.FileChoosePathChange";
     }
 }

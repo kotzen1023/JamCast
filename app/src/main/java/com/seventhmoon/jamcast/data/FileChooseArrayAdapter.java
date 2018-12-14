@@ -22,7 +22,8 @@ import com.seventhmoon.jamcast.R;
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.seventhmoon.jamcast.ui.FileChooseActivity.FileChooseLongClick;
+import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.FileChooseLongClick;
+
 
 public class FileChooseArrayAdapter extends ArrayAdapter<FileChooseItem> {
     private static final String TAG = FileChooseArrayAdapter.class.getName();

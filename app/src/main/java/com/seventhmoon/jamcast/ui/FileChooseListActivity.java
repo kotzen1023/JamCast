@@ -35,19 +35,18 @@ public class FileChooseListActivity extends BaseActivity {
 
     private Bundle mVoiceSearchParams;
 
-    public static boolean FileChooseLongClick = false;
-    public static boolean FileChooseSelectAll = false;
+
 
     //private Context context;
 
 
-    public ListView listView;
-    public static Button confirm;
-    private File currentDir;
-    private Menu actionmenu;
+    //public static ListView fileChooselistView;
+    //public static Button confirm;
+    //private File currentDir;
+    //private Menu actionmenu;
 
-    private static BroadcastReceiver mReceiver = null;
-    private static boolean isRegister = false;
+    //private static BroadcastReceiver mReceiver = null;
+    //private static boolean isRegister = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +58,7 @@ public class FileChooseListActivity extends BaseActivity {
         initializeToolbar(3);
         initializeFromParams(savedInstanceState, getIntent());
 
-        listView = findViewById(R.id.listViewFileChoose);
+        //fileChooselistView = findViewById(R.id.listViewFileChoose);
 
         // Only check if a full screen player is needed on the first time:
         /*if (savedInstanceState == null) {

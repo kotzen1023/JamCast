@@ -159,7 +159,6 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.FileChooseActivity" />
         <activity android:name=".ui.FileChooseListActivity" />
 
         <service android:name=".service.SearchFileService" />

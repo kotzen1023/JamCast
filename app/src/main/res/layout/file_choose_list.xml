@@ -59,7 +59,7 @@
 
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/btnFileChooseListConfirm"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
     </LinearLayout>
 
 

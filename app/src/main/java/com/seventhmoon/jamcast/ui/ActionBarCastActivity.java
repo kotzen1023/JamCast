@@ -3,12 +3,16 @@ package com.seventhmoon.jamcast.ui;
 import android.Manifest;
 import android.app.ActivityOptions;
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -34,18 +38,25 @@ import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.seventhmoon.jamcast.R;
+import com.seventhmoon.jamcast.data.Constants;
 import com.seventhmoon.jamcast.data.FileChooseItem;
 import com.seventhmoon.jamcast.utils.LogHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.seventhmoon.jamcast.data.FileOperation.init_folder_and_files;
+
+import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.currentDir;
 import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.fileChooseArrayAdapter;
-import static com.seventhmoon.jamcast.ui.FileChooseListActivity.FileChooseLongClick;
-import static com.seventhmoon.jamcast.ui.FileChooseListActivity.FileChooseSelectAll;
+import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.fileChooseConfirm;
+import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.fileChooseListView;
+import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.FileChooseLongClick;
+import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.FileChooseSelectAll;
+import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.fill;
 
 public class ActionBarCastActivity extends AppCompatActivity {
     private static final String TAG = LogHelper.makeLogTag(ActionBarCastActivity.class);
@@ -54,7 +65,7 @@ public class ActionBarCastActivity extends AppCompatActivity {
 
     private CastContext mCastContext;
     private MenuItem mMediaRouteMenuItem;
-    private Toolbar mToolbar;
+    private static Toolbar mToolbar;
     private Menu mMenu;
     public static MenuItem menuItemAdd;
     public static MenuItem menuItemSelectAll;
@@ -67,6 +78,9 @@ public class ActionBarCastActivity extends AppCompatActivity {
     private int activity_called = 0;
 
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+
+    private static BroadcastReceiver mReceiver = null;
+    private static boolean isRegister = false;
 
     private CastStateListener mCastStateListener = new CastStateListener() {
         @Override
@@ -158,6 +172,8 @@ public class ActionBarCastActivity extends AppCompatActivity {
                 init_folder_and_files();
             }
         }
+
+
     }
 
     @Override
@@ -288,7 +304,122 @@ public class ActionBarCastActivity extends AppCompatActivity {
             case R.id.action_selectAll:
                 Log.e(TAG, "action_selectAll");
 
+                if (!FileChooseLongClick) {
+                    FileChooseLongClick = true;
 
+                    if (!FileChooseSelectAll) {
+                        FileChooseSelectAll = true;
+                        item.setTitle(getResources().getString(R.string.unselect_all));
+                        Log.d(TAG, "listView.getCount = "+fileChooseListView.getCount());
+                        for (int i = 0; i < fileChooseListView.getCount(); i++) {
+                            FileChooseItem fileChooseItem = fileChooseArrayAdapter.getItem(i);
+
+                            if (fileChooseItem != null) {
+
+                                if (fileChooseItem.getCheckBox() != null) {
+                                    //Log.e(TAG, "set item[" + i + "] visible");
+                                    if (!fileChooseItem.getName().equals("..")) {
+                                        fileChooseItem.getCheckBox().setVisibility(View.VISIBLE);
+                                        fileChooseItem.getCheckBox().setChecked(true);
+                                        fileChooseArrayAdapter.mSparseBooleanArray.put(i, true);
+                                    } else {
+                                        fileChooseItem.getCheckBox().setVisibility(View.INVISIBLE);
+                                        fileChooseItem.getCheckBox().setChecked(false);
+                                        fileChooseArrayAdapter.mSparseBooleanArray.put(i, false);
+                                    }
+
+                                } else {
+                                    fileChooseArrayAdapter.mSparseBooleanArray.put(i, true);
+                                }
+                            }
+                            //fileChooseArrayAdapter.mSparseBooleanArray.put(i, true);
+                        }
+
+                        fileChooseConfirm.setVisibility(View.VISIBLE);
+                    } else { //Data.FileChooseSelectAll == true
+                        FileChooseSelectAll = false;
+                        item.setTitle(getResources().getString(R.string.select_all));
+
+                        for (int i = 0; i < fileChooseListView.getCount(); i++) {
+                            FileChooseItem fileChooseItem = fileChooseArrayAdapter.getItem(i);
+
+                            if (fileChooseItem != null) {
+
+                                if (fileChooseItem.getCheckBox() != null) {
+                                    //Log.e(TAG, "set item[" + i + "] visible");
+                                    if (!fileChooseItem.getName().equals("..")) {
+                                        fileChooseItem.getCheckBox().setVisibility(View.VISIBLE);
+                                        fileChooseItem.getCheckBox().setChecked(false);
+                                    } else {
+                                        fileChooseItem.getCheckBox().setVisibility(View.INVISIBLE);
+                                        fileChooseItem.getCheckBox().setChecked(false);
+                                    }
+
+                                }
+                                fileChooseArrayAdapter.mSparseBooleanArray.put(i, false);
+                            }
+                        }
+                        fileChooseConfirm.setVisibility(View.GONE);
+                    }
+
+                } else { //long click == true
+                    if (!FileChooseSelectAll) {
+                        FileChooseSelectAll = true;
+                        item.setTitle(getResources().getString(R.string.unselect_all));
+                        Log.d(TAG, "listView.getCount = "+fileChooseListView.getCount());
+                        for (int i = 0; i < fileChooseListView.getCount(); i++) {
+                            FileChooseItem fileChooseItem = fileChooseArrayAdapter.getItem(i);
+
+                            if (fileChooseItem != null) {
+
+                                if (fileChooseItem.getCheckBox() != null) {
+                                    //Log.e(TAG, "set item[" + i + "] visible");
+                                    if (!fileChooseItem.getName().equals("..")) {
+                                        //Log.e(TAG, "item["+i+"]="+fileChooseItem.getName());
+                                        //fileChooseItem.getCheckBox().setVisibility(View.VISIBLE);
+                                        fileChooseItem.getCheckBox().setChecked(true);
+                                        fileChooseArrayAdapter.mSparseBooleanArray.put(i, true);
+                                    } else {
+                                        fileChooseItem.getCheckBox().setChecked(false);
+                                        fileChooseArrayAdapter.mSparseBooleanArray.put(i, false);
+                                    }
+
+                                } else {
+                                    //Log.e(TAG, "item["+i+"]="+fileChooseItem.getName());
+                                    fileChooseArrayAdapter.mSparseBooleanArray.put(i, true);
+                                }
+                            }
+                            //fileChooseArrayAdapter.mSparseBooleanArray.put(i, true);
+                        }
+                        fileChooseConfirm.setVisibility(View.VISIBLE);
+                    } else { //Data.FileChooseSelectAll == true
+                        FileChooseSelectAll = false;
+                        item.setTitle(getResources().getString(R.string.select_all));
+
+                        for (int i = 0; i < fileChooseListView.getCount(); i++) {
+                            FileChooseItem fileChooseItem = fileChooseArrayAdapter.getItem(i);
+
+                            if (fileChooseItem != null) {
+
+                                if (fileChooseItem.getCheckBox() != null) {
+                                    //Log.e(TAG, "set item[" + i + "] visible");
+                                    if (!fileChooseItem.getName().equals("..")) {
+                                        //fileChooseItem.getCheckBox().setVisibility(View.VISIBLE);
+                                        fileChooseItem.getCheckBox().setChecked(false);
+                                    } else {
+                                        fileChooseItem.getCheckBox().setChecked(false);
+                                    }
+
+                                }
+                                fileChooseArrayAdapter.mSparseBooleanArray.put(i, false);
+                            }
+                        }
+
+                        fileChooseConfirm.setVisibility(View.GONE);
+                    }
+
+
+                }
 
                 break;
 
@@ -304,14 +435,76 @@ public class ActionBarCastActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawers();
             return;
         }
-        // Otherwise, it may return to the previous fragment stack
-        FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager.getBackStackEntryCount() > 0) {
-            fragmentManager.popBackStack();
+
+        if (FileChooseLongClick) {
+            //MenuItem menuItem = actionmenu.findItem(R.id.action_selectall);
+
+            FileChooseLongClick = false;
+            FileChooseSelectAll = false;
+            menuItemSelectAll.setTitle(getResources().getString(R.string.select_all));
+
+
+            for(int i=0;i<fileChooseListView.getCount(); i++) {
+                FileChooseItem fileChooseItem = fileChooseArrayAdapter.getItem(i);
+
+                if (fileChooseItem != null) {
+
+                    if (fileChooseItem.getCheckBox() != null) {
+                        fileChooseItem.getCheckBox().setVisibility(View.INVISIBLE);
+                        fileChooseItem.getCheckBox().setChecked(false);
+                    }
+                    fileChooseArrayAdapter.mSparseBooleanArray.put(i, false);
+                }
+            }
+
+            fileChooseConfirm.setVisibility(View.GONE);
         } else {
-            // Lastly, it will rely on the system behavior for back
-            super.onBackPressed();
+            //Log.e(TAG, "currentDir = "+currentDir+" root = "+Environment.getExternalStorageDirectory().getPath());
+            if (currentDir!= null && !currentDir.getAbsolutePath().equals(Environment.getExternalStorageDirectory().getPath())) {
+                File parent = new File(currentDir.getParent());
+
+                fill(parent);
+
+                currentDir = new File(parent.getAbsolutePath());
+
+                //MenuItem menuItem = actionmenu.findItem(R.id.action_selectall);
+
+                FileChooseLongClick = false;
+                FileChooseSelectAll = false;
+                menuItemSelectAll.setTitle(getResources().getString(R.string.select_all));
+
+
+                for (int i = 0; i < fileChooseListView.getCount(); i++) {
+                    FileChooseItem fileChooseItem = fileChooseArrayAdapter.getItem(i);
+
+                    if (fileChooseItem != null) {
+
+                        if (fileChooseItem.getCheckBox() != null) {
+                            fileChooseItem.getCheckBox().setVisibility(View.INVISIBLE);
+                            fileChooseItem.getCheckBox().setChecked(false);
+                        }
+                        fileChooseArrayAdapter.mSparseBooleanArray.put(i, false);
+                    }
+
+                }
+            } else {
+
+                // Otherwise, it may return to the previous fragment stack
+                FragmentManager fragmentManager = getFragmentManager();
+                if (fragmentManager.getBackStackEntryCount() > 0) {
+                    fragmentManager.popBackStack();
+                } else {
+                    // Lastly, it will rely on the system behavior for back
+                    super.onBackPressed();
+                }
+
+                //finish();
+            }
+
         }
+
+
+
     }
 
     @Override
@@ -324,6 +517,11 @@ public class ActionBarCastActivity extends AppCompatActivity {
     public void setTitle(int titleId) {
         super.setTitle(titleId);
         mToolbar.setTitle(titleId);
+    }
+
+    public static void setPath(String s) {
+        mToolbar.setTitle(s);
+
     }
 
     protected void initializeToolbar(int activity_id) {
