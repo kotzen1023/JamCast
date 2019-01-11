@@ -40,6 +40,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.seventhmoon.jamcast.R;
 import com.seventhmoon.jamcast.data.Constants;
 import com.seventhmoon.jamcast.data.FileChooseItem;
+import com.seventhmoon.jamcast.data.initData;
 import com.seventhmoon.jamcast.utils.LogHelper;
 
 import java.io.File;
@@ -167,9 +168,20 @@ public class ActionBarCastActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             init_folder_and_files();
+
+            if (!initData.isInit) {
+                LogHelper.e(TAG, "initData");
+                initData.isInit = true;
+            }
+
         } else {
             if(checkAndRequestPermissions()) {
                 init_folder_and_files();
+
+                if (!initData.isInit) {
+                    LogHelper.e(TAG, "initData");
+                    initData.isInit = true;
+                }
             }
         }
 

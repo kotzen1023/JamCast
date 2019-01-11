@@ -32,7 +32,7 @@
         <include layout="@layout/include_toolbar" android:id="@+id/toolbar_container"/>
 
         <FrameLayout
-            android:id="@+id/container"
+            android:id="@+id/music_list_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/toolbar_container"

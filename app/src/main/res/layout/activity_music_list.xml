@@ -15,6 +15,17 @@
 
         <include layout="@layout/include_toolbar" android:id="@+id/toolbar_container"/>
 
+        <!--ListView
+            android:id="@+id/songList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar_container"
+            android:layout_above="@+id/controls_container"
+            >
+
+
+        </ListView-->
+
         <FrameLayout
             android:id="@+id/music_list_container"
             android:layout_width="match_parent"

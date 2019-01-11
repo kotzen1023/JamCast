@@ -27,6 +27,7 @@ import com.seventhmoon.jamcast.R;
 import com.seventhmoon.jamcast.data.Constants;
 import com.seventhmoon.jamcast.data.FileChooseArrayAdapter;
 import com.seventhmoon.jamcast.data.FileChooseItem;
+import com.seventhmoon.jamcast.service.SearchFileService;
 import com.seventhmoon.jamcast.utils.LogHelper;
 
 import java.io.File;
@@ -35,7 +36,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
+import static com.seventhmoon.jamcast.data.initData.searchList;
 import static com.seventhmoon.jamcast.ui.ActionBarCastActivity.setPath;
+
 
 public class FileChooseBrowserFragment extends Fragment {
     private static final String TAG = LogHelper.makeLogTag(FileChooseBrowserFragment.class);
@@ -140,6 +143,32 @@ public class FileChooseBrowserFragment extends Fragment {
         });
 
         fileChooseConfirm = rootView.findViewById(R.id.btnFileChooseListConfirm);
+        fileChooseConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchList.clear();
+
+                for (int i = 0; i < fileChooseListView.getCount(); i++) {
+                    if (fileChooseArrayAdapter.mSparseBooleanArray.get(i)) {
+                        FileChooseItem fileChooseItem = fileChooseArrayAdapter.getItem(i);
+
+                        if (fileChooseItem != null) {
+
+                            Log.e(TAG, "select : " + fileChooseItem.getPath());
+                            searchList.add(fileChooseItem.getPath());
+                        }
+                    }
+
+                }
+
+                Intent saveintent = new Intent(fragmentContext, SearchFileService.class);
+                saveintent.setAction(Constants.ACTION.GET_SEARCHLIST_ACTION);
+                fragmentContext.startService(saveintent);
+
+                //searchFiles();
+                //finish();
+            }
+        });
         //listView.setAdapter(mBrowserAdapter);
 
         IntentFilter filter;

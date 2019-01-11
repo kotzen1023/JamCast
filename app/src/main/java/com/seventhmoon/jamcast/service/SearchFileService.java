@@ -12,8 +12,9 @@ import com.seventhmoon.jamcast.data.Song;
 import java.io.File;
 import java.io.IOException;
 
-import static com.seventhmoon.jamcast.ui.MusicListActivity.addSongList;
-import static com.seventhmoon.jamcast.ui.MusicListActivity.searchList;
+import static com.seventhmoon.jamcast.data.initData.addSongList;
+import static com.seventhmoon.jamcast.data.initData.searchList;
+
 
 public class SearchFileService extends IntentService {
     private static final String TAG = SearchFileService.class.getName();

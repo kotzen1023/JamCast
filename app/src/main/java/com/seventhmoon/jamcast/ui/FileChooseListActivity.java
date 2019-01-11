@@ -1,5 +1,9 @@
 package com.seventhmoon.jamcast.ui;
 
+import android.app.ActivityOptions;
+import android.app.Service;
+import android.content.Context;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 //import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -13,14 +17,21 @@ import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.seventhmoon.jamcast.R;
+import com.seventhmoon.jamcast.data.Constants;
 import com.seventhmoon.jamcast.data.FileChooseArrayAdapter;
 import com.seventhmoon.jamcast.utils.LogHelper;
 
 import java.io.File;
+
+import static com.seventhmoon.jamcast.data.initData.addSongList;
+import static com.seventhmoon.jamcast.data.initData.searchList;
+import static com.seventhmoon.jamcast.data.initData.songList;
 
 public class FileChooseListActivity extends BaseActivity {
 
@@ -36,8 +47,9 @@ public class FileChooseListActivity extends BaseActivity {
     private Bundle mVoiceSearchParams;
 
 
-
-    //private Context context;
+    private static BroadcastReceiver mReceiver = null;
+    private static boolean isRegister = false;
+    private Context context;
 
 
     //public static ListView fileChooselistView;
@@ -55,6 +67,9 @@ public class FileChooseListActivity extends BaseActivity {
 
 
         setContentView(R.layout.activity_file_choose);
+
+        context = getApplicationContext();
+
         initializeToolbar(3);
         initializeFromParams(savedInstanceState, getIntent());
 
@@ -65,11 +80,64 @@ public class FileChooseListActivity extends BaseActivity {
             Log.d(TAG, "savedInstanceState = null");
             startFullScreenActivityIfNeeded(getIntent());
         }*/
+
+
+        IntentFilter filter;
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (intent.getAction() != null) {
+                    if (intent.getAction().equalsIgnoreCase(Constants.ACTION.ADD_SONG_LIST_COMPLETE)) {
+                        Log.d(TAG, "receive ADD_SONG_LIST_COMPLETE !");
+
+                        LogHelper.e(TAG, "=== addSongList ===");
+                        for (int i=0; i<addSongList.size(); i++) {
+                            LogHelper.d(TAG, addSongList.get(i).getName());
+                        }
+                        LogHelper.e(TAG, "=== addSongList ===");
+                        //check if search list's song was exist in songList
+
+
+
+
+                        Bundle extras = ActivityOptions.makeCustomAnimation(
+                                context, R.anim.fade_in, R.anim.fade_out).toBundle();
+
+                        Class activityClass = null;
+                        activityClass = MusicListActivity.class;
+                        startActivity(new Intent(context, activityClass), extras);
+                        finish();
+                    }
+                }
+            }
+        };
+
+        if (!isRegister) {
+            filter = new IntentFilter();
+            filter.addAction(Constants.ACTION.ADD_SONG_LIST_COMPLETE);
+
+            registerReceiver(mReceiver, filter);
+            isRegister = true;
+            Log.d(TAG, "registerReceiver mReceiver");
+        }
     }
 
     @Override
     protected void onDestroy() {
         LogHelper.e(TAG, "MusicListActivity onDestroy");
+
+        if (isRegister && mReceiver != null) {
+            try {
+                unregisterReceiver(mReceiver);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            isRegister = false;
+            mReceiver = null;
+            Log.d(TAG, "unregisterReceiver mReceiver");
+        }
 
 
 

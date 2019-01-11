@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.provider.SyncStateContract;
+
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseBooleanArray;

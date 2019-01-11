@@ -12,15 +12,19 @@ import android.util.Log;
 
 import com.seventhmoon.jamcast.R;
 import com.seventhmoon.jamcast.data.Song;
+import com.seventhmoon.jamcast.data.SongArrayAdapter;
 import com.seventhmoon.jamcast.utils.LogHelper;
 
 import java.util.ArrayList;
+
+import static com.seventhmoon.jamcast.data.initData.addSongList;
+import static com.seventhmoon.jamcast.data.initData.searchList;
 
 public class MusicListActivity extends BaseActivity  {
 
     private static final String TAG = LogHelper.makeLogTag(MusicListActivity.class);
     private static final String SAVED_MEDIA_ID="com.seventhmoon.android.jamcast.MEDIA_ID";
-    private static final String FRAGMENT_TAG = "jamcast_musiclist_container";
+    private static final String FRAGMENT_TAG = "music_list_container";
     public static final String EXTRA_START_FULLSCREEN =
             "com.seventhmoon.android.jamcast.EXTRA_START_FULLSCREEN";
 
@@ -29,10 +33,11 @@ public class MusicListActivity extends BaseActivity  {
 
     private Bundle mVoiceSearchParams;
 
-    public static ArrayList<Song> songList = new ArrayList<>();
+    //public static ArrayList<Song> songList = new ArrayList<>();
     //for add songs to list
-    public static ArrayList<String> searchList = new ArrayList<>();
-    public static ArrayList<Song> addSongList = new ArrayList<>();
+    //public static ArrayList<String> searchList = new ArrayList<>();
+    //public static ArrayList<Song> addSongList = new ArrayList<>();
+    SongArrayAdapter songArrayAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,11 @@ public class MusicListActivity extends BaseActivity  {
         setContentView(R.layout.activity_music_list);
         initializeToolbar(2);
         initializeFromParams(savedInstanceState, getIntent());
+
+        LogHelper.e(TAG, "check addSongList size = "+addSongList.size());
+
+
+
 
         // Only check if a full screen player is needed on the first time:
         /*if (savedInstanceState == null) {
@@ -127,8 +137,11 @@ public class MusicListActivity extends BaseActivity  {
         //navigateToBrowser(mediaId);
     }
 
-    private void navigateToBrowser(String mediaId) {
-        Log.d(TAG, "navigateToBrowser, mediaId=" + mediaId);
+    //private void navigateToBrowser(String mediaId) {
+    private void navigateToBrowser() {
+
+
+        /*Log.d(TAG, "navigateToBrowser, mediaId=" + mediaId);
         MediaBrowserFragment fragment = getBrowseFragment();
 
         if (fragment == null || !TextUtils.equals(fragment.getMediaId(), mediaId)) {
@@ -145,7 +158,7 @@ public class MusicListActivity extends BaseActivity  {
                 transaction.addToBackStack(null);
             }
             transaction.commit();
-        }
+        }*/
     }
 
     public String getMediaId() {
