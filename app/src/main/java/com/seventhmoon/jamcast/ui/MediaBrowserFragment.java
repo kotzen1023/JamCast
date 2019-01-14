@@ -47,6 +47,9 @@ public class MediaBrowserFragment extends Fragment {
             // We don't care about network changes while this fragment is not associated
             // with a media ID (for example, while it is being initialized)
             if (mMediaId != null) {
+
+                LogHelper.e(TAG, "onReceive mMediaId = "+mMediaId);
+
                 boolean isOnline = NetworkHelper.isOnline(context);
                 if (isOnline != oldOnline) {
                     oldOnline = isOnline;

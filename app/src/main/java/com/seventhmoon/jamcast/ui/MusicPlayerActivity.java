@@ -141,6 +141,9 @@ public class MusicPlayerActivity extends BaseActivity
                 mediaId = savedInstanceState.getString(SAVED_MEDIA_ID);
             }
         }
+
+        LogHelper.e(TAG, "mediaId = "+mediaId);
+
         navigateToBrowser(mediaId);
     }
 
@@ -170,6 +173,9 @@ public class MusicPlayerActivity extends BaseActivity
         if (fragment == null) {
             return null;
         }
+
+        LogHelper.e(TAG, "fragment.getMediaId() = "+fragment.getMediaId());
+
         return fragment.getMediaId();
     }
 

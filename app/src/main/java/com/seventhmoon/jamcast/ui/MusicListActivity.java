@@ -135,14 +135,14 @@ public class MusicListActivity extends BaseActivity  {
             }
         }
         //navigateToBrowser(mediaId);
+        navigateToBrowser();
     }
 
     //private void navigateToBrowser(String mediaId) {
     private void navigateToBrowser() {
 
-
-        /*Log.d(TAG, "navigateToBrowser, mediaId=" + mediaId);
-        MediaBrowserFragment fragment = getBrowseFragment();
+        //Log.d(TAG, "navigateToBrowser, mediaId=" + mediaId);
+        /*MediaBrowserFragment fragment = getBrowseFragment();
 
         if (fragment == null || !TextUtils.equals(fragment.getMediaId(), mediaId)) {
             fragment = new MediaBrowserFragment();
