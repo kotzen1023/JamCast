@@ -49,10 +49,10 @@ public class MusicService extends MediaBrowserServiceCompat implements
     private static final String TAG = LogHelper.makeLogTag(MusicService.class);
 
     // Extra on MediaSession that contains the Cast device name currently connected to
-    public static final String EXTRA_CONNECTED_CAST = "com.example.android.uamp.CAST_NAME";
+    public static final String EXTRA_CONNECTED_CAST = "com.seventhmoon.jamcast.CAST_NAME";
     // The action of the incoming Intent indicating that it contains a command
     // to be executed (see {@link #onStartCommand})
-    public static final String ACTION_CMD = "com.example.android.uamp.ACTION_CMD";
+    public static final String ACTION_CMD = "com.seventhmoon.jamcast.ACTION_CMD";
     // The key in the extras of the incoming Intent indicating the command that
     // should be executed (see {@link #onStartCommand})
     public static final String CMD_NAME = "CMD_NAME";
@@ -87,7 +87,7 @@ public class MusicService extends MediaBrowserServiceCompat implements
     @Override
     public void onCreate() {
         super.onCreate();
-        LogHelper.d(TAG, "onCreate");
+        LogHelper.e(TAG, "onCreate");
 
         mMusicProvider = new MusicProvider();
 
@@ -231,7 +231,7 @@ public class MusicService extends MediaBrowserServiceCompat implements
     @Override
     public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid,
                                  Bundle rootHints) {
-        LogHelper.d(TAG, "OnGetRoot: clientPackageName=" + clientPackageName,
+        LogHelper.e(TAG, "OnGetRoot: clientPackageName=" + clientPackageName,
                 "; clientUid=" + clientUid + " ; rootHints=", rootHints);
         // To ensure you are not allowing any arbitrary app to browse your app's contents, you
         // need to check the origin:
@@ -239,7 +239,7 @@ public class MusicService extends MediaBrowserServiceCompat implements
             // If the request comes from an untrusted package, return an empty browser root.
             // If you return null, then the media browser will not be able to connect and
             // no further calls will be made to other media browsing methods.
-            LogHelper.i(TAG, "OnGetRoot: Browsing NOT ALLOWED for unknown caller. "
+            LogHelper.e(TAG, "OnGetRoot: Browsing NOT ALLOWED for unknown caller. "
                     + "Returning empty browser root so all apps can use MediaController."
                     + clientPackageName);
             return new MediaBrowserServiceCompat.BrowserRoot(MEDIA_ID_EMPTY_ROOT, null);
@@ -265,15 +265,25 @@ public class MusicService extends MediaBrowserServiceCompat implements
     @Override
     public void onLoadChildren(@NonNull final String parentMediaId,
                                @NonNull final Result<List<MediaBrowserCompat.MediaItem>> result) {
-        LogHelper.d(TAG, "OnLoadChildren: parentMediaId=", parentMediaId);
+        LogHelper.e(TAG, "OnLoadChildren: parentMediaId=", parentMediaId);
         if (MEDIA_ID_EMPTY_ROOT.equals(parentMediaId)) {
+            LogHelper.e(TAG, "==>1");
             result.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
         } else if (mMusicProvider.isInitialized()) {
+            LogHelper.e(TAG, "==>2");
             // if music library is ready, return immediately
+
+            LogHelper.e(TAG, "mMusicProvider.getChildren size = "+mMusicProvider.getChildren(parentMediaId, getResources()).size()+", stuff ="+mMusicProvider.getChildren(parentMediaId, getResources()));
+
             result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources()));
         } else {
+            LogHelper.e(TAG, "==>3");
             // otherwise, only return results when the music library is retrieved
             result.detach();
+
+            LogHelper.e(TAG, "mMusicProvider.getChildren size = "+mMusicProvider.getChildren(parentMediaId, getResources()).size()+", stuff ="+mMusicProvider.getChildren(parentMediaId, getResources()));
+
+
             mMusicProvider.retrieveMediaAsync(new MusicProvider.Callback() {
                 @Override
                 public void onMusicCatalogReady(boolean success) {

@@ -200,7 +200,7 @@ public class MusicProvider {
      * for future reference, keying tracks by musicId and grouping by genre.
      */
     public void retrieveMediaAsync(final Callback callback) {
-        LogHelper.d(TAG, "retrieveMediaAsync called");
+        LogHelper.e(TAG, "retrieveMediaAsync called");
         if (mCurrentState == State.INITIALIZED) {
             if (callback != null) {
                 // Nothing to do, execute callback immediately
@@ -227,6 +227,8 @@ public class MusicProvider {
     }
 
     private synchronized void buildListsByGenre() {
+        LogHelper.e(TAG, "buildListsByGenre start");
+
         ConcurrentMap<String, List<MediaMetadataCompat>> newMusicListByGenre = new ConcurrentHashMap<>();
 
         for (MutableMediaMetadata m : mMusicListById.values()) {
@@ -239,9 +241,13 @@ public class MusicProvider {
             list.add(m.metadata);
         }
         mMusicListByGenre = newMusicListByGenre;
+        LogHelper.e(TAG, "size = "+newMusicListByGenre.size());
+
+        LogHelper.e(TAG, "buildListsByGenre end");
     }
 
     private synchronized void retrieveMedia() {
+        LogHelper.e(TAG, "[retrieveMedia start]");
         try {
             if (mCurrentState == State.NON_INITIALIZED) {
                 mCurrentState = State.INITIALIZING;
@@ -250,8 +256,13 @@ public class MusicProvider {
                 while (tracks.hasNext()) {
                     MediaMetadataCompat item = tracks.next();
                     String musicId = item.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+                    //LogHelper.e(TAG, "musicId = "+musicId);
                     mMusicListById.put(musicId, new MutableMediaMetadata(musicId, item));
+
                 }
+
+
+
                 buildListsByGenre();
                 mCurrentState = State.INITIALIZED;
             }
@@ -262,6 +273,8 @@ public class MusicProvider {
                 mCurrentState = State.NON_INITIALIZED;
             }
         }
+
+        LogHelper.e(TAG, "[retrieveMedia end]");
     }
 
 
@@ -298,7 +311,7 @@ public class MusicProvider {
                 .setTitle(resources.getString(R.string.browse_genres))
                 .setSubtitle(resources.getString(R.string.browse_genre_subtitle))
                 .setIconUri(Uri.parse("android.resource://" +
-                        "com.example.android.uamp/drawable/ic_by_genre"))
+                        "com.seventhmoon.jamcast/drawable/ic_by_genre"))
                 .build();
         return new MediaBrowserCompat.MediaItem(description,
                 MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);

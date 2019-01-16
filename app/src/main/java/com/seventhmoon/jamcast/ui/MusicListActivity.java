@@ -23,13 +23,13 @@ import static com.seventhmoon.jamcast.data.initData.searchList;
 public class MusicListActivity extends BaseActivity  {
 
     private static final String TAG = LogHelper.makeLogTag(MusicListActivity.class);
-    private static final String SAVED_MEDIA_ID="com.seventhmoon.android.jamcast.MEDIA_ID";
+    private static final String SAVED_MEDIA_ID="com.seventhmoon.jamcast.MEDIA_ID";
     private static final String FRAGMENT_TAG = "music_list_container";
     public static final String EXTRA_START_FULLSCREEN =
-            "com.seventhmoon.android.jamcast.EXTRA_START_FULLSCREEN";
+            "com.seventhmoon.jamcast.EXTRA_START_FULLSCREEN";
 
     public static final String EXTRA_CURRENT_MEDIA_DESCRIPTION =
-            "com.seventhmoon.android.jamcast.CURRENT_MEDIA_DESCRIPTION";
+            "com.seventhmoon.jamcast.CURRENT_MEDIA_DESCRIPTION";
 
     private Bundle mVoiceSearchParams;
 

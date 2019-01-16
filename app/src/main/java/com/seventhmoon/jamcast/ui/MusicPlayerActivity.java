@@ -25,11 +25,11 @@ public class MusicPlayerActivity extends BaseActivity
         implements MediaBrowserFragment.MediaFragmentListener {
 
     private static final String TAG = LogHelper.makeLogTag(MusicPlayerActivity.class);
-    private static final String SAVED_MEDIA_ID="com.seventhmoon.android.jamcast.MEDIA_ID";
+    private static final String SAVED_MEDIA_ID="com.seventhmoon.jamcast.MEDIA_ID";
     private static final String FRAGMENT_TAG = "music_list_container";
 
     public static final String EXTRA_START_FULLSCREEN =
-            "com.seventhmoon.android.jamcast.EXTRA_START_FULLSCREEN";
+            "com.seventhmoon.jamcast.EXTRA_START_FULLSCREEN";
 
     /**
      * Optionally used with {@link #EXTRA_START_FULLSCREEN} to carry a MediaDescription to
@@ -37,7 +37,7 @@ public class MusicPlayerActivity extends BaseActivity
      * while the {@link android.support.v4.media.session.MediaControllerCompat} is connecting.
      */
     public static final String EXTRA_CURRENT_MEDIA_DESCRIPTION =
-            "com.seventhmoon.android.jamcast.CURRENT_MEDIA_DESCRIPTION";
+            "com.seventhmoon.jamcast.CURRENT_MEDIA_DESCRIPTION";
 
 
 
@@ -46,7 +46,7 @@ public class MusicPlayerActivity extends BaseActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogHelper.d(TAG, "MusicPlayerActivity onCreate");
+        LogHelper.e(TAG, "MusicPlayerActivity onCreate");
 
         setContentView(R.layout.activity_player);
 
@@ -57,7 +57,7 @@ public class MusicPlayerActivity extends BaseActivity
 
         // Only check if a full screen player is needed on the first time:
         if (savedInstanceState == null) {
-            Log.d(TAG, "savedInstanceState = null");
+            Log.e(TAG, "savedInstanceState = null");
             startFullScreenActivityIfNeeded(getIntent());
         }
 
@@ -66,7 +66,7 @@ public class MusicPlayerActivity extends BaseActivity
 
     @Override
     protected void onDestroy() {
-        LogHelper.d(TAG, "MusicPlayerActivity onDestroy");
+        LogHelper.e(TAG, "MusicPlayerActivity onDestroy");
 
 
 

@@ -29,7 +29,7 @@ public class BaseActivity extends ActionBarCastActivity implements MediaBrowserP
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LogHelper.d(TAG, "Activity onCreate");
+        LogHelper.e(TAG, "** BaseActivity onCreate start **");
 
         if (Build.VERSION.SDK_INT >= 21) {
             // Since our app icon has the same color as colorPrimary, our entry in the Recent Apps
@@ -47,28 +47,32 @@ public class BaseActivity extends ActionBarCastActivity implements MediaBrowserP
         // this can be done, for example by sharing the session token directly.
         mMediaBrowser = new MediaBrowserCompat(this,
                 new ComponentName(this, MusicService.class), mConnectionCallback, null);
+
+        LogHelper.e(TAG, "** BaseActivity onCreate end **");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        LogHelper.d(TAG, "Activity onStart");
+        LogHelper.e(TAG, "** BaseActivity onStart start **");
 
         mControlsFragment = (PlaybackControlsFragment) getFragmentManager()
                 .findFragmentById(R.id.fragment_playback_controls);
         if (mControlsFragment == null) {
-            throw new IllegalStateException("Mising fragment with id 'controls'. Cannot continue.");
+            throw new IllegalStateException("Missing fragment with id 'controls'. Cannot continue.");
         }
 
         hidePlaybackControls();
 
         mMediaBrowser.connect();
+
+        LogHelper.e(TAG, "** BaseActivity onStart end **");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        LogHelper.d(TAG, "Activity onStop");
+        LogHelper.e(TAG, "BaseActivity onStop");
         MediaControllerCompat controllerCompat = MediaControllerCompat.getMediaController(this);
         if (controllerCompat != null) {
             controllerCompat.unregisterCallback(mMediaControllerCallback);

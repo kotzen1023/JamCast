@@ -31,6 +31,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.seventhmoon.jamcast.MusicService;
+import com.seventhmoon.jamcast.R;
 import com.seventhmoon.jamcast.model.MusicProvider;
 import com.seventhmoon.jamcast.model.MusicProviderSource;
 import com.seventhmoon.jamcast.utils.LogHelper;
@@ -207,7 +208,7 @@ public class LocalPlayback implements Playback {
             // Produces DataSource instances through which media data is loaded.
             DataSource.Factory dataSourceFactory =
                     new DefaultDataSourceFactory(
-                            mContext, Util.getUserAgent(mContext, "uamp"), null);
+                            mContext, Util.getUserAgent(mContext, "JamCast"), null);
             // Produces Extractor instances for parsing the media data.
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             // The MediaSource represents the media to be played.

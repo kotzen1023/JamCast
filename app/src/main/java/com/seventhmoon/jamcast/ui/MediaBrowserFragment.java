@@ -286,6 +286,8 @@ public class MediaBrowserFragment extends Fragment {
         @NonNull
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            //LogHelper.e(TAG, "getView position = "+position);
+
             MediaBrowserCompat.MediaItem item = getItem(position);
             return MediaItemViewHolder.setupListView((Activity) getContext(), convertView, parent,
                     item);

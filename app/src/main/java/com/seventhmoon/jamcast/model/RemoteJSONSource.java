@@ -35,7 +35,10 @@ public class RemoteJSONSource implements MusicProviderSource {
 
     @Override
     public Iterator<MediaMetadataCompat> iterator() {
+
         try {
+            LogHelper.e(TAG, "iterator start");
+
             int slashPos = CATALOG_URL.lastIndexOf('/');
             String path = CATALOG_URL.substring(0, slashPos + 1);
             JSONObject jsonObj = fetchJSONFromUrl(CATALOG_URL);
@@ -49,14 +52,22 @@ public class RemoteJSONSource implements MusicProviderSource {
                     }
                 }
             }
+
+            LogHelper.e(TAG, "iterator end");
+
             return tracks.iterator();
         } catch (JSONException e) {
             LogHelper.e(TAG, e, "Could not retrieve music list");
             throw new RuntimeException("Could not retrieve music list", e);
         }
+
+
     }
 
     private MediaMetadataCompat buildFromJSON(JSONObject json, String basePath) throws JSONException {
+
+        //LogHelper.e(TAG, "[buildFromJSON start]");
+
         String title = json.getString(JSON_TITLE);
         String album = json.getString(JSON_ALBUM);
         String artist = json.getString(JSON_ARTIST);
@@ -67,7 +78,7 @@ public class RemoteJSONSource implements MusicProviderSource {
         int totalTrackCount = json.getInt(JSON_TOTAL_TRACK_COUNT);
         int duration = json.getInt(JSON_DURATION) * 1000; // ms
 
-        LogHelper.d(TAG, "Found music track: ", json);
+        LogHelper.e(TAG, "Found music track: ", json);
 
         // Media is stored relative to JSON file
         if (!source.startsWith("http")) {
@@ -85,6 +96,9 @@ public class RemoteJSONSource implements MusicProviderSource {
         // the session metadata can be accessed by notification listeners. This is done in this
         // sample for convenience only.
         //noinspection ResourceType
+
+        //LogHelper.e(TAG, "[buildFromJSON end]");
+
         return new MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, id)
                 //.putString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE, source)

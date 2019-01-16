@@ -29,17 +29,17 @@ import com.seventhmoon.jamcast.utils.ResourceHelper;
 public class MediaNotificationManager extends BroadcastReceiver {
     private static final String TAG = LogHelper.makeLogTag(MediaNotificationManager.class);
 
-    private static final String CHANNEL_ID = "com.example.android.uamp.MUSIC_CHANNEL_ID";
+    private static final String CHANNEL_ID = "com.seventhmoon.jamcast.MUSIC_CHANNEL_ID";
 
     private static final int NOTIFICATION_ID = 412;
     private static final int REQUEST_CODE = 100;
 
-    public static final String ACTION_PAUSE = "com.example.android.uamp.pause";
-    public static final String ACTION_PLAY = "com.example.android.uamp.play";
-    public static final String ACTION_PREV = "com.example.android.uamp.prev";
-    public static final String ACTION_NEXT = "com.example.android.uamp.next";
-    public static final String ACTION_STOP = "com.example.android.uamp.stop";
-    public static final String ACTION_STOP_CASTING = "com.example.android.uamp.stop_cast";
+    public static final String ACTION_PAUSE = "com.seventhmoon.jamcast.pause";
+    public static final String ACTION_PLAY = "com.seventhmoon.jamcast.play";
+    public static final String ACTION_PREV = "com.seventhmoon.jamcast.prev";
+    public static final String ACTION_NEXT = "com.seventhmoon.jamcast.next";
+    public static final String ACTION_STOP = "com.seventhmoon.jamcast.stop";
+    public static final String ACTION_STOP_CASTING = "com.seventhmoon.jamcast.stop_cast";
 
     private final MusicService mService;
     private MediaSessionCompat.Token mSessionToken;
