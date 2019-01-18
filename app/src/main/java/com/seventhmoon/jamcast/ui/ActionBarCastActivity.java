@@ -112,7 +112,6 @@ public class ActionBarCastActivity extends AppCompatActivity {
                 switch (mItemToOpenWhenDrawerCloses) {
                     case R.id.navigation_allmusic:
                         activityClass = MusicPlayerActivity.class;
-
                         break;
                     case R.id.navigation_playlists:
                         activityClass = PlaceholderActivity.class;

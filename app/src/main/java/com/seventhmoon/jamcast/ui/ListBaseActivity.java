@@ -19,8 +19,9 @@ import com.seventhmoon.jamcast.utils.LogHelper;
 import com.seventhmoon.jamcast.utils.NetworkHelper;
 import com.seventhmoon.jamcast.utils.ResourceHelper;
 
-public class BaseActivity extends ActionBarCastActivity implements MediaBrowserProvider {
-    private static final String TAG = LogHelper.makeLogTag(BaseActivity.class);
+public class ListBaseActivity extends ActionBarCastActivity implements MediaBrowserProvider {
+
+    private static final String TAG = LogHelper.makeLogTag(ListBaseActivity.class);
 
     private MediaBrowserCompat mMediaBrowser;
     private PlaybackControlsFragment mControlsFragment;
@@ -29,7 +30,7 @@ public class BaseActivity extends ActionBarCastActivity implements MediaBrowserP
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LogHelper.e(TAG, "** BaseActivity onCreate start **");
+        LogHelper.e(TAG, "** ListBaseActivity onCreate start **");
 
         if (Build.VERSION.SDK_INT >= 21) {
             // Since our app icon has the same color as colorPrimary, our entry in the Recent Apps
@@ -48,13 +49,13 @@ public class BaseActivity extends ActionBarCastActivity implements MediaBrowserP
         mMediaBrowser = new MediaBrowserCompat(this,
                 new ComponentName(this, MusicService.class), mConnectionCallback, null);
 
-        LogHelper.e(TAG, "** BaseActivity onCreate end **");
+        LogHelper.e(TAG, "** ListBaseActivity onCreate end **");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        LogHelper.e(TAG, "** BaseActivity onStart start **");
+        LogHelper.e(TAG, "** ListBaseActivity onStart start **");
 
         mControlsFragment = (PlaybackControlsFragment) getFragmentManager()
                 .findFragmentById(R.id.fragment_playback_controls);
@@ -66,18 +67,25 @@ public class BaseActivity extends ActionBarCastActivity implements MediaBrowserP
 
         mMediaBrowser.connect();
 
-        LogHelper.e(TAG, "** BaseActivity onStart end **");
+        LogHelper.e(TAG, "** ListBaseActivity onStart end **");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        LogHelper.e(TAG, "BaseActivity onStop");
+        LogHelper.e(TAG, "ListBaseActivity onStop");
         MediaControllerCompat controllerCompat = MediaControllerCompat.getMediaController(this);
         if (controllerCompat != null) {
             controllerCompat.unregisterCallback(mMediaControllerCallback);
         }
         mMediaBrowser.disconnect();
+    }
+
+    @Override
+    protected void onDestroy() {
+        LogHelper.e(TAG, "ListBaseActivity onDestroy");
+
+        super.onDestroy();
     }
 
     @Override

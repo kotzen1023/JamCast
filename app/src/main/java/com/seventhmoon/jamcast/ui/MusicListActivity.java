@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import static com.seventhmoon.jamcast.data.initData.addSongList;
 import static com.seventhmoon.jamcast.data.initData.searchList;
 
-public class MusicListActivity extends BaseActivity  {
+public class MusicListActivity extends ListBaseActivity  {
 
     private static final String TAG = LogHelper.makeLogTag(MusicListActivity.class);
     private static final String SAVED_MEDIA_ID="com.seventhmoon.jamcast.MEDIA_ID";
