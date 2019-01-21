@@ -121,6 +121,9 @@ public class RemoteJSONSource implements MusicProviderSource {
      * @return result JSONObject containing the parsed representation.
      */
     private JSONObject fetchJSONFromUrl(String urlString) throws JSONException {
+
+        LogHelper.e(TAG, "fetchJSONFromUrl start");
+
         BufferedReader reader = null;
         try {
             URLConnection urlConnection = new URL(urlString).openConnection();
@@ -131,11 +134,16 @@ public class RemoteJSONSource implements MusicProviderSource {
             while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
+
+
+
             return new JSONObject(sb.toString());
         } catch (JSONException e) {
+
             throw e;
         } catch (Exception e) {
             LogHelper.e(TAG, "Failed to parse the json for media list", e);
+
             return null;
         } finally {
             if (reader != null) {
@@ -145,6 +153,7 @@ public class RemoteJSONSource implements MusicProviderSource {
                     // ignore
                 }
             }
+            LogHelper.e(TAG, "fetchJSONFromUrl end");
         }
     }
 }

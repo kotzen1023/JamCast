@@ -135,9 +135,9 @@ public class MusicProvider {
             return Collections.emptyList();
         }
         ArrayList<MediaMetadataCompat> result = new ArrayList<>();
-        query = query.toLowerCase(Locale.US);
+        query = query.toLowerCase(Locale.getDefault());
         for (MutableMediaMetadata track : mMusicListById.values()) {
-            if (track.metadata.getString(metadataField).toLowerCase(Locale.US)
+            if (track.metadata.getString(metadataField).toLowerCase(Locale.getDefault())
                     .contains(query)) {
                 result.add(track.metadata);
             }
@@ -233,6 +233,7 @@ public class MusicProvider {
 
         for (MutableMediaMetadata m : mMusicListById.values()) {
             String genre = m.metadata.getString(MediaMetadataCompat.METADATA_KEY_GENRE);
+            LogHelper.e(TAG, "genre = "+genre+", m.metadata = "+m.metadata);
             List<MediaMetadataCompat> list = newMusicListByGenre.get(genre);
             if (list == null) {
                 list = new ArrayList<>();

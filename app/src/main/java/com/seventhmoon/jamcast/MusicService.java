@@ -87,7 +87,7 @@ public class MusicService extends MediaBrowserServiceCompat implements
     @Override
     public void onCreate() {
         super.onCreate();
-        LogHelper.e(TAG, "onCreate");
+        LogHelper.e(TAG, "[MusicService onCreate]");
 
         mMusicProvider = new MusicProvider();
 
