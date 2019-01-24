@@ -131,6 +131,8 @@
             </intent-filter>
         </service>
 
+        <service android:name=".LocalMusicService" />
+
         <!--
              (REQUIRED) use this meta data to to declare the app OptionsProvider.
         -->

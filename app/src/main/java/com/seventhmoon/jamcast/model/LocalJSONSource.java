@@ -51,10 +51,17 @@ public class LocalJSONSource implements MusicProviderSource {
                     }
                 }
             }*/
+
+            LogHelper.e(TAG, "addSongList.size() = "+addSongList.size());
+
             if (addSongList.size() > 0) {
                 for (int i=0; i<addSongList.size(); i++) {
                     tracks.add(buildFromList(addSongList.get(i)));
                 }
+            }
+
+            for (int i=0; i< tracks.size(); i++) {
+                LogHelper.e(TAG, "track["+i+"] = "+tracks.get(i).toString());
             }
 
             LogHelper.e(TAG, "iterator end");
@@ -68,14 +75,14 @@ public class LocalJSONSource implements MusicProviderSource {
 
     private MediaMetadataCompat buildFromList(Song song) {
 
-        //LogHelper.e(TAG, "[buildFromJSON start]");
+        LogHelper.e(TAG, "[buildFromList start]");
 
         //String title = json.getString(JSON_TITLE);
         String title = song.getName();
         String album = "";
         String artist = "";
         String genre = "";
-        String source = "";
+        String source = song.getPath();
         String iconUrl = "";
         int trackNumber = 0;
         int totalTrackCount = 1;

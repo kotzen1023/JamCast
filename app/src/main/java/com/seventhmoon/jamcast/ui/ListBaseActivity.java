@@ -13,6 +13,7 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
+import com.seventhmoon.jamcast.LocalMusicService;
 import com.seventhmoon.jamcast.MusicService;
 import com.seventhmoon.jamcast.R;
 import com.seventhmoon.jamcast.utils.LogHelper;
@@ -46,8 +47,8 @@ public class ListBaseActivity extends ActionBarCastActivity implements MediaBrow
 
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.
-        /*mMediaBrowser = new MediaBrowserCompat(this,
-                new ComponentName(this, MusicService.class), mConnectionCallback, null);*/
+        mMediaBrowser = new MediaBrowserCompat(this,
+                new ComponentName(this, LocalMusicService.class), mConnectionCallback, null);
 
         LogHelper.e(TAG, "** ListBaseActivity onCreate end **");
     }
@@ -65,7 +66,7 @@ public class ListBaseActivity extends ActionBarCastActivity implements MediaBrow
 
         hidePlaybackControls();
 
-        /*mMediaBrowser.connect();*/
+        mMediaBrowser.connect();
 
         LogHelper.e(TAG, "** ListBaseActivity onStart end **");
     }
@@ -74,11 +75,11 @@ public class ListBaseActivity extends ActionBarCastActivity implements MediaBrow
     protected void onStop() {
         super.onStop();
         LogHelper.e(TAG, "ListBaseActivity onStop");
-        /*MediaControllerCompat controllerCompat = MediaControllerCompat.getMediaController(this);
+        MediaControllerCompat controllerCompat = MediaControllerCompat.getMediaController(this);
         if (controllerCompat != null) {
             controllerCompat.unregisterCallback(mMediaControllerCallback);
         }
-        mMediaBrowser.disconnect();*/
+        mMediaBrowser.disconnect();
     }
 
     @Override
