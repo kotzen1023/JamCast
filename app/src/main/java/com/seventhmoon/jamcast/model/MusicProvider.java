@@ -253,7 +253,11 @@ public class MusicProvider {
             if (mCurrentState == State.NON_INITIALIZED) {
                 mCurrentState = State.INITIALIZING;
 
+                LogHelper.e(TAG, "==== start ======");
                 Iterator<MediaMetadataCompat> tracks = mSource.iterator();
+                LogHelper.e(TAG, "===== end =======");
+
+
                 while (tracks.hasNext()) {
                     MediaMetadataCompat item = tracks.next();
                     String musicId = item.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);

@@ -176,6 +176,9 @@ public class MusicService extends MediaBrowserServiceCompat implements
      */
     @Override
     public int onStartCommand(Intent startIntent, int flags, int startId) {
+
+        LogHelper.e(TAG, "onStartCommand start");
+
         if (startIntent != null) {
             String action = startIntent.getAction();
             String command = startIntent.getStringExtra(CMD_NAME);
@@ -194,6 +197,9 @@ public class MusicService extends MediaBrowserServiceCompat implements
         // nothing is playing.
         mDelayedStopHandler.removeCallbacksAndMessages(null);
         mDelayedStopHandler.sendEmptyMessageDelayed(0, STOP_DELAY);
+
+        LogHelper.e(TAG, "onStartCommand end");
+
         return START_STICKY;
     }
 
@@ -333,6 +339,9 @@ public class MusicService extends MediaBrowserServiceCompat implements
     }
 
     private void registerCarConnectionReceiver() {
+
+        LogHelper.e(TAG, "registerCarConnectionReceiver start");
+
         IntentFilter filter = new IntentFilter(CarHelper.ACTION_MEDIA_STATUS);
         mCarConnectionReceiver = new BroadcastReceiver() {
             @Override
@@ -344,6 +353,8 @@ public class MusicService extends MediaBrowserServiceCompat implements
             }
         };
         registerReceiver(mCarConnectionReceiver, filter);
+
+        LogHelper.e(TAG, "registerCarConnectionReceiver end");
     }
 
     private void unregisterCarConnectionReceiver() {

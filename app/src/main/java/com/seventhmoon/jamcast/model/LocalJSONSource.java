@@ -81,7 +81,7 @@ public class LocalJSONSource implements MusicProviderSource {
         String title = song.getName();
         String album = "";
         String artist = "";
-        String genre = "";
+        String genre = "__JAMCAST__";
         String source = song.getPath();
         String iconUrl = "";
         int trackNumber = 0;

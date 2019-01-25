@@ -131,7 +131,7 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
                 playback);
 
         // Start a new MediaSession
-        mSession = new MediaSessionCompat(this, "MusicService");
+        mSession = new MediaSessionCompat(this, "LocalMusicService");
         setSessionToken(mSession.getSessionToken());
         mSession.setCallback(mLocalPlaybackManager.getMediaSessionCallback());
         mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
@@ -237,6 +237,7 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
         }
         //noinspection StatementWithEmptyBody
         if (CarHelper.isValidCarPackage(clientPackageName)) {
+
             // Optional: if your app needs to adapt the music library to show a different subset
             // when connected to the car, this is where you should handle it.
             // If you want to adapt other runtime behaviors, like tweak ads or change some behavior

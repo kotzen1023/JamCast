@@ -44,6 +44,7 @@ public class RemoteJSONSource implements MusicProviderSource {
             JSONObject jsonObj = fetchJSONFromUrl(CATALOG_URL);
             ArrayList<MediaMetadataCompat> tracks = new ArrayList<>();
             if (jsonObj != null) {
+
                 JSONArray jsonTracks = jsonObj.getJSONArray(JSON_MUSIC);
 
                 if (jsonTracks != null) {
@@ -66,7 +67,7 @@ public class RemoteJSONSource implements MusicProviderSource {
 
     private MediaMetadataCompat buildFromJSON(JSONObject json, String basePath) throws JSONException {
 
-        //LogHelper.e(TAG, "[buildFromJSON start]");
+        LogHelper.e(TAG, "[buildFromJSON start]");
 
         String title = json.getString(JSON_TITLE);
         String album = json.getString(JSON_ALBUM);
@@ -140,7 +141,10 @@ public class RemoteJSONSource implements MusicProviderSource {
                 sb.append(line);
             }
 
+            //LogHelper.e(TAG, "sb.toString() = "+sb.toString());
 
+
+            LogHelper.e(TAG, "fetchJSONFromUrl end");
 
             return new JSONObject(sb.toString());
         } catch (JSONException e) {
@@ -158,7 +162,7 @@ public class RemoteJSONSource implements MusicProviderSource {
                     // ignore
                 }
             }
-            LogHelper.e(TAG, "fetchJSONFromUrl end");
+
         }
     }
 }
