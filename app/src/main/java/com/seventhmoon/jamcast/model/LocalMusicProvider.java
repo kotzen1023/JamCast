@@ -48,6 +48,7 @@ public class LocalMusicProvider {
 
     public LocalMusicProvider() {
         this(new LocalJSONSource());
+        LogHelper.e(TAG, "==> LocalMusicProvider()");
     }
 
     public LocalMusicProvider(MusicProviderSource source) {

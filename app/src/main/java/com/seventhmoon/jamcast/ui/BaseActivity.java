@@ -132,6 +132,9 @@ public class BaseActivity extends ActionBarCastActivity implements MediaBrowserP
     }
 
     private void connectToSession(MediaSessionCompat.Token token) throws RemoteException {
+
+        LogHelper.e(TAG, "connectToSession start ==>");
+
         MediaControllerCompat mediaController = new MediaControllerCompat(this, token);
         MediaControllerCompat.setMediaController(this, mediaController);
         mediaController.registerCallback(mMediaControllerCallback);
@@ -149,6 +152,8 @@ public class BaseActivity extends ActionBarCastActivity implements MediaBrowserP
         }
 
         onMediaControllerConnected();
+
+        LogHelper.e(TAG, "connectToSession end ==>");
     }
 
     // Callback that ensures that we are showing the controls

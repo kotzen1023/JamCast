@@ -47,9 +47,12 @@ public class MusicProvider {
     }
 
     public MusicProvider() {
+
         this(new RemoteJSONSource());
+        LogHelper.e(TAG, "==> MusicProvider()");
     }
     public MusicProvider(MusicProviderSource source) {
+
         mSource = source;
         mMusicListByGenre = new ConcurrentHashMap<>();
         mMusicListById = new ConcurrentHashMap<>();

@@ -131,8 +131,13 @@
             </intent-filter>
         </service>
 
-        <service android:name=".LocalMusicService" />
-
+        <service android:name=".LocalMusicService"
+            android:exported="true"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
         <!--
              (REQUIRED) use this meta data to to declare the app OptionsProvider.
         -->

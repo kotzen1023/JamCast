@@ -33,7 +33,7 @@ import static com.seventhmoon.jamcast.data.initData.addSongList;
 import static com.seventhmoon.jamcast.data.initData.searchList;
 import static com.seventhmoon.jamcast.data.initData.songList;
 
-public class FileChooseListActivity extends BaseActivity {
+public class FileChooseListActivity extends ListBaseActivity {
 
     private static final String TAG = LogHelper.makeLogTag(FileChooseListActivity.class);
     private static final String SAVED_MEDIA_ID="com.seventhmoon.jamcast.MEDIA_ID";

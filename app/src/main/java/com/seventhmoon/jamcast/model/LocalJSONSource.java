@@ -81,7 +81,7 @@ public class LocalJSONSource implements MusicProviderSource {
         String title = song.getName();
         String album = "";
         String artist = "";
-        String genre = "__JAMCAST__";
+        String genre = "user";
         String source = song.getPath();
         String iconUrl = "";
         int trackNumber = 0;
@@ -97,6 +97,9 @@ public class LocalJSONSource implements MusicProviderSource {
         if (!iconUrl.startsWith("http")) {
             iconUrl = basePath + iconUrl;
         }*/
+
+        LogHelper.e(TAG, "source = "+source);
+
         // Since we don't have a unique ID in the server, we fake one using the hashcode of
         // the music source. In a real world app, this could come from the server.
         String id = String.valueOf(source.hashCode());
@@ -111,7 +114,7 @@ public class LocalJSONSource implements MusicProviderSource {
 
         return new MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, id)
-                //.putString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE, source)
+                .putString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE, source)
 
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, album)
                 .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
