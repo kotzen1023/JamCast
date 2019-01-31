@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_GENRE;
+import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_JAMCAST;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_SEARCH;
 
 public class LocalQueueHelper {
@@ -23,7 +24,7 @@ public class LocalQueueHelper {
     private static final int RANDOM_QUEUE_SIZE = 10;
 
     public static List<MediaSessionCompat.QueueItem> getPlayingQueue(String mediaId,
-                                                                     LocalMusicProvider musicProvider) {
+                                                                     LocalMusicProvider localMusicProvider) {
 
         // extract the browsing hierarchy from the media ID:
         String[] hierarchy = MediaIDHelper.getHierarchy(mediaId);
@@ -39,10 +40,10 @@ public class LocalQueueHelper {
 
         Iterable<MediaMetadataCompat> tracks = null;
         // This sample only supports genre and by_search category types.
-        if (categoryType.equals(MEDIA_ID_MUSICS_BY_GENRE)) {
-            tracks = musicProvider.getMusicsByGenre(categoryValue);
+        if (categoryType.equals(MEDIA_ID_MUSICS_BY_JAMCAST)) {
+            tracks = localMusicProvider.getMusicsByGenre(categoryValue);
         } else if (categoryType.equals(MEDIA_ID_MUSICS_BY_SEARCH)) {
-            tracks = musicProvider.searchMusicBySongTitle(categoryValue);
+            tracks = localMusicProvider.searchMusicBySongTitle(categoryValue);
         }
 
         if (tracks == null) {

@@ -104,9 +104,11 @@ public class PlaybackControlsFragment extends Fragment {
     }
 
     public void onConnected() {
+        LogHelper.e(TAG, "onConnected()");
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(getActivity());
         LogHelper.d(TAG, "onConnected, mediaController==null? ", controller == null);
         if (controller != null) {
+            LogHelper.e(TAG, "controller != null");
             onMetadataChanged(controller.getMetadata());
             onPlaybackStateChanged(controller.getPlaybackState());
             controller.registerCallback(mCallback);

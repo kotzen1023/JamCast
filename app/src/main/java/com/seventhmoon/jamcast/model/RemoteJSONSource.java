@@ -48,9 +48,11 @@ public class RemoteJSONSource implements MusicProviderSource {
                 JSONArray jsonTracks = jsonObj.getJSONArray(JSON_MUSIC);
 
                 if (jsonTracks != null) {
+                    LogHelper.e(TAG, "[buildFromJSON start]");
                     for (int j = 0; j < jsonTracks.length(); j++) {
                         tracks.add(buildFromJSON(jsonTracks.getJSONObject(j), path));
                     }
+                    LogHelper.e(TAG, "[buildFromJSON end]");
                 }
             }
 
@@ -67,7 +69,7 @@ public class RemoteJSONSource implements MusicProviderSource {
 
     private MediaMetadataCompat buildFromJSON(JSONObject json, String basePath) throws JSONException {
 
-        LogHelper.e(TAG, "[buildFromJSON start]");
+        //LogHelper.e(TAG, "[buildFromJSON start]");
 
         String title = json.getString(JSON_TITLE);
         String album = json.getString(JSON_ALBUM);
@@ -91,7 +93,7 @@ public class RemoteJSONSource implements MusicProviderSource {
         // Since we don't have a unique ID in the server, we fake one using the hashcode of
         // the music source. In a real world app, this could come from the server.
 
-        LogHelper.e(TAG, "source = "+source);
+        //LogHelper.e(TAG, "source = "+source);
 
         String id = String.valueOf(source.hashCode());
 

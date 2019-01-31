@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import static com.seventhmoon.jamcast.data.initData.addSongList;
 import static com.seventhmoon.jamcast.data.initData.searchList;
 
-public class MusicListActivity extends ListBaseActivity  {
+public class MusicListActivity extends ListBaseActivity implements MediaBrowserFragment.MediaFragmentListener {
 
     private static final String TAG = LogHelper.makeLogTag(MusicListActivity.class);
     private static final String SAVED_MEDIA_ID="com.seventhmoon.jamcast.MEDIA_ID";
@@ -79,24 +79,14 @@ public class MusicListActivity extends ListBaseActivity  {
         super.onSaveInstanceState(outState);
     }
 
-
-
-
-
-
-
-
-
-
-
-    /*@Override
+    @Override
     public void setToolbarTitle(CharSequence title) {
         Log.d(TAG, "Setting toolbar title to "+ title);
         if (title == null) {
             title = getString(R.string.app_name);
         }
         setTitle(title);
-    }*/
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -134,15 +124,15 @@ public class MusicListActivity extends ListBaseActivity  {
                 mediaId = savedInstanceState.getString(SAVED_MEDIA_ID);
             }
         }
-        //navigateToBrowser(mediaId);
-        navigateToBrowser();
+        navigateToBrowser(mediaId);
+
     }
 
-    //private void navigateToBrowser(String mediaId) {
-    private void navigateToBrowser() {
+    private void navigateToBrowser(String mediaId) {
+
 
         //Log.d(TAG, "navigateToBrowser, mediaId=" + mediaId);
-        /*MediaBrowserFragment fragment = getBrowseFragment();
+        MediaBrowserFragment fragment = getBrowseFragment();
 
         if (fragment == null || !TextUtils.equals(fragment.getMediaId(), mediaId)) {
             fragment = new MediaBrowserFragment();
@@ -151,14 +141,14 @@ public class MusicListActivity extends ListBaseActivity  {
             transaction.setCustomAnimations(
                     R.animator.slide_in_from_right, R.animator.slide_out_to_left,
                     R.animator.slide_in_from_left, R.animator.slide_out_to_right);
-            transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
+            transaction.replace(R.id.local_music_list_container, fragment, FRAGMENT_TAG);
             // If this is not the top level media (root), we add it to the fragment back stack,
             // so that actionbar toggle and Back will work appropriately:
             if (mediaId != null) {
                 transaction.addToBackStack(null);
             }
             transaction.commit();
-        }*/
+        }
     }
 
     public String getMediaId() {
@@ -173,7 +163,7 @@ public class MusicListActivity extends ListBaseActivity  {
         return (MediaBrowserFragment) getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
     }
 
-    /*@Override
+    @Override
     public void onMediaItemSelected(MediaBrowserCompat.MediaItem item) {
         Log.d(TAG, "onMediaItemSelected, mediaId=" + item.getMediaId());
         if (item.isPlayable()) {
@@ -185,9 +175,9 @@ public class MusicListActivity extends ListBaseActivity  {
             Log.w(TAG, "Ignoring MediaItem that is neither browsable nor playable: "+
                     "mediaId="+ item.getMediaId());
         }
-    }*/
+    }
 
-    /*@Override
+    @Override
     protected void onMediaControllerConnected() {
         if (mVoiceSearchParams != null) {
             // If there is a bootstrap parameter to start from a search query, we
@@ -199,5 +189,5 @@ public class MusicListActivity extends ListBaseActivity  {
             mVoiceSearchParams = null;
         }
         getBrowseFragment().onConnected();
-    }*/
+    }
 }

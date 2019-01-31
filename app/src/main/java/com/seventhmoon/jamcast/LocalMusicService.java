@@ -345,6 +345,9 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
         @Override
         public void handleMessage(Message msg) {
             LocalMusicService service = mWeakReference.get();
+
+            LogHelper.e(TAG, "msg = "+msg.toString());
+
             if (service != null && service.mLocalPlaybackManager.getPlayback() != null) {
                 if (service.mLocalPlaybackManager.getPlayback().isPlaying()) {
                     LogHelper.d(TAG, "Ignoring delayed stop since the media player is in use.");
@@ -360,7 +363,7 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
 
         @Override
         public void onSessionEnded(CastSession session, int error) {
-            LogHelper.d(TAG, "onSessionEnded");
+            LogHelper.e(TAG, "onSessionEnded");
             mSessionExtras.remove(EXTRA_CONNECTED_CAST);
             mSession.setExtras(mSessionExtras);
             Playback playback = new LocalLocalPlayBack(LocalMusicService.this, mLocalMusicProvider);
@@ -375,6 +378,7 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
         @Override
         public void onSessionStarted(CastSession session, String sessionId) {
             // In case we are casting, send the device name as an extra on MediaSession metadata.
+            LogHelper.e(TAG, "onSessionStarted");
             mSessionExtras.putString(EXTRA_CONNECTED_CAST,
                     session.getCastDevice().getFriendlyName());
             mSession.setExtras(mSessionExtras);

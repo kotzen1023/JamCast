@@ -157,6 +157,7 @@ public class ListBaseActivity extends ActionBarCastActivity implements MediaBrow
         }
 
         if (mControlsFragment != null) {
+            LogHelper.e(TAG, "mControlsFragment != null");
             mControlsFragment.onConnected();
         }
 

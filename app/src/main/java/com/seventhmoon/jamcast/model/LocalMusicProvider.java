@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_GENRE;
+import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_JAMCAST;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_ROOT;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.createMediaID;
 
@@ -31,7 +32,8 @@ public class LocalMusicProvider {
     private MusicProviderSource mSource;
 
     // Categorized caches for music track data:
-    private ConcurrentMap<String, List<MediaMetadataCompat>> mMusicListByGenre;
+    //private ConcurrentMap<String, List<MediaMetadataCompat>> mMusicListByGenre;
+    private ConcurrentMap<String, List<MediaMetadataCompat>> mMusicListByJamcast;
     private final ConcurrentMap<String, MutableMediaMetadata> mMusicListById;
 
     private final Set<String> mFavoriteTracks;
@@ -53,7 +55,7 @@ public class LocalMusicProvider {
 
     public LocalMusicProvider(MusicProviderSource source) {
         mSource = source;
-        mMusicListByGenre = new ConcurrentHashMap<>();
+        mMusicListByJamcast = new ConcurrentHashMap<>();
         mMusicListById = new ConcurrentHashMap<>();
         mFavoriteTracks = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     }
@@ -62,7 +64,7 @@ public class LocalMusicProvider {
         if (mCurrentState != State.INITIALIZED) {
             return Collections.emptyList();
         }
-        return mMusicListByGenre.keySet();
+        return mMusicListByJamcast.keySet();
     }
 
     public Iterable<MediaMetadataCompat> getShuffledMusic() {
@@ -78,10 +80,10 @@ public class LocalMusicProvider {
     }
 
     public List<MediaMetadataCompat> getMusicsByGenre(String genre) {
-        if (mCurrentState != State.INITIALIZED || !mMusicListByGenre.containsKey(genre)) {
+        if (mCurrentState != State.INITIALIZED || !mMusicListByJamcast.containsKey(genre)) {
             return Collections.emptyList();
         }
-        return mMusicListByGenre.get(genre);
+        return mMusicListByJamcast.get(genre);
     }
 
     public List<MediaMetadataCompat> searchMusicBySongTitle(String query) {
@@ -201,7 +203,7 @@ public class LocalMusicProvider {
             }
             list.add(m.metadata);
         }
-        mMusicListByGenre = newMusicListByGenre;
+        mMusicListByJamcast = newMusicListByGenre;
         LogHelper.e(TAG, "size = "+newMusicListByGenre.size());
 
         LogHelper.e(TAG, "buildListsByGenre end");
@@ -251,12 +253,12 @@ public class LocalMusicProvider {
         if (MEDIA_ID_ROOT.equals(mediaId)) {
             mediaItems.add(createBrowsableMediaItemForRoot(resources));
 
-        } else if (MEDIA_ID_MUSICS_BY_GENRE.equals(mediaId)) {
+        } else if (MEDIA_ID_MUSICS_BY_JAMCAST.equals(mediaId)) {
             for (String genre : getGenres()) {
                 mediaItems.add(createBrowsableMediaItemForGenre(genre, resources));
             }
 
-        } else if (mediaId.startsWith(MEDIA_ID_MUSICS_BY_GENRE)) {
+        } else if (mediaId.startsWith(MEDIA_ID_MUSICS_BY_JAMCAST)) {
             String genre = MediaIDHelper.getHierarchy(mediaId)[1];
             for (MediaMetadataCompat metadata : getMusicsByGenre(genre)) {
                 mediaItems.add(createMediaItem(metadata));
@@ -269,8 +271,11 @@ public class LocalMusicProvider {
     }
 
     private MediaBrowserCompat.MediaItem createBrowsableMediaItemForRoot(Resources resources) {
+
+        LogHelper.e(TAG, "==>createBrowsableMediaItemForRoot");
+
         MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MEDIA_ID_MUSICS_BY_GENRE)
+                .setMediaId(MEDIA_ID_MUSICS_BY_JAMCAST)
                 .setTitle(resources.getString(R.string.browse_genres))
                 .setSubtitle(resources.getString(R.string.browse_genre_subtitle))
                 .setIconUri(Uri.parse("android.resource://" +
@@ -282,8 +287,10 @@ public class LocalMusicProvider {
 
     private MediaBrowserCompat.MediaItem createBrowsableMediaItemForGenre(String genre,
                                                                           Resources resources) {
+        LogHelper.e(TAG, "==>createBrowsableMediaItemForGenre");
+
         MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                .setMediaId(createMediaID(null, MEDIA_ID_MUSICS_BY_GENRE, genre))
+                .setMediaId(createMediaID(null, MEDIA_ID_MUSICS_BY_JAMCAST, genre))
                 .setTitle(genre)
                 .setSubtitle(resources.getString(
                         R.string.browse_musics_by_genre_subtitle, genre))
@@ -299,7 +306,7 @@ public class LocalMusicProvider {
         // on where the music was selected from (by artist, by genre, random, etc)
         String genre = metadata.getString(MediaMetadataCompat.METADATA_KEY_GENRE);
         String hierarchyAwareMediaID = createMediaID(
-                metadata.getDescription().getMediaId(), MEDIA_ID_MUSICS_BY_GENRE, genre);
+                metadata.getDescription().getMediaId(), MEDIA_ID_MUSICS_BY_JAMCAST, genre);
         MediaMetadataCompat copy = new MediaMetadataCompat.Builder(metadata)
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, hierarchyAwareMediaID)
                 .build();
