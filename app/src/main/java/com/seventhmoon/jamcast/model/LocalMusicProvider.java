@@ -244,6 +244,9 @@ public class LocalMusicProvider {
     }
 
     public List<MediaBrowserCompat.MediaItem> getChildren(String mediaId, Resources resources) {
+
+        LogHelper.e(TAG, "getChildren, mediaId = "+mediaId+", Resources = "+resources.toString());
+
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
 
         if (!MediaIDHelper.isBrowseable(mediaId)) {
@@ -276,8 +279,8 @@ public class LocalMusicProvider {
 
         MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
                 .setMediaId(MEDIA_ID_MUSICS_BY_JAMCAST)
-                .setTitle(resources.getString(R.string.browse_genres))
-                .setSubtitle(resources.getString(R.string.browse_genre_subtitle))
+                .setTitle(resources.getString(R.string.browse_jamcast))
+                .setSubtitle(resources.getString(R.string.browse_jamcast_subtitle))
                 .setIconUri(Uri.parse("android.resource://" +
                         "com.seventhmoon.jamcast/drawable/ic_by_genre"))
                 .build();
@@ -304,9 +307,15 @@ public class LocalMusicProvider {
         // can set a hierarchy-aware mediaID. We will need to know the media hierarchy
         // when we get a onPlayFromMusicID call, so we can create the proper queue based
         // on where the music was selected from (by artist, by genre, random, etc)
+
+
+
         String genre = metadata.getString(MediaMetadataCompat.METADATA_KEY_GENRE);
         String hierarchyAwareMediaID = createMediaID(
                 metadata.getDescription().getMediaId(), MEDIA_ID_MUSICS_BY_JAMCAST, genre);
+
+        LogHelper.e(TAG, "createMediaItem id = "+hierarchyAwareMediaID);
+
         MediaMetadataCompat copy = new MediaMetadataCompat.Builder(metadata)
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, hierarchyAwareMediaID)
                 .build();
