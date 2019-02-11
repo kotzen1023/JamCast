@@ -47,8 +47,15 @@ public class ListBaseActivity extends ActionBarCastActivity implements MediaBrow
 
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.
-        mMediaBrowser = new MediaBrowserCompat(this,
-                new ComponentName(this, LocalMusicService.class), mConnectionCallback, null);
+
+        if (mMediaBrowser != null) {
+            mMediaBrowser.notifyAll();
+        } else {
+            mMediaBrowser = new MediaBrowserCompat(this,
+                    new ComponentName(this, LocalMusicService.class), mConnectionCallback, null);
+        }
+
+
 
         LogHelper.e(TAG, "** ListBaseActivity onCreate end **");
     }

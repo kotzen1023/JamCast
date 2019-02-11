@@ -73,6 +73,6 @@
     <string name="song_list_empty">播放清單為空</string>
     <string name="list_empty">播放清單為空. 試著按下\"新增\"按鈕來增加歌曲到你的播放清單!</string>
     <string name="play_mode_video">影片</string>
-    <string name="browse_jamcast">JamCast</string>
-    <string name="browse_jamcast_subtitle">Songs by JamCast</string>
+    <string name="browse_jamcast">預設播放清單</string>
+    <string name="browse_jamcast_subtitle"></string>
 </resources>
