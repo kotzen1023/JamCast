@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.seventhmoon.jamcast.MusicService.EXTRA_CONNECTED_CAST;
+import static com.seventhmoon.jamcast.data.initData.addSongList;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_EMPTY_ROOT;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_ROOT;
 
@@ -203,7 +204,7 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
 
     @Override
     public void onDestroy() {
-        LogHelper.e(TAG, "onDestroy");
+        LogHelper.e(TAG, "[LocalMusicService onDestroy]");
         unregisterCarConnectionReceiver();
         // Service is being killed, so make sure we release our resources
         mLocalPlaybackManager.handleStopRequest(null);
@@ -257,6 +258,14 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
     @Override
     public void onLoadChildren(@NonNull final String parentMediaId,
                                @NonNull final Result<List<MediaBrowserCompat.MediaItem>> result) {
+
+        if (addSongList.size() > 0 && !mLocalMusicProvider.getSetState()) {
+            mLocalMusicProvider.setSetState(true);
+            LogHelper.e(TAG, "addSongList.size() > 0 set state 0");
+            mLocalMusicProvider.setState(0);
+        }
+
+
         LogHelper.e(TAG, "OnLoadChildren: parentMediaId=", parentMediaId);
         if (MEDIA_ID_EMPTY_ROOT.equals(parentMediaId)) {
             LogHelper.e(TAG, "==>1");

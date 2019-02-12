@@ -37,6 +37,7 @@ public class LocalMusicProvider {
     private final ConcurrentMap<String, MutableMediaMetadata> mMusicListById;
 
     private final Set<String> mFavoriteTracks;
+    public static boolean isSetState = false;
 
     enum State {
         NON_INITIALIZED, INITIALIZING, INITIALIZED
@@ -61,9 +62,11 @@ public class LocalMusicProvider {
     }
 
     public Iterable<String> getGenres() {
+
         if (mCurrentState != State.INITIALIZED) {
             return Collections.emptyList();
         }
+
         return mMusicListByJamcast.keySet();
     }
 
@@ -157,6 +160,24 @@ public class LocalMusicProvider {
         return mCurrentState == State.INITIALIZED;
     }
 
+    public void setState(int current_state) {
+
+
+        switch (current_state) {
+            case 0:
+                mCurrentState = State.NON_INITIALIZED;
+                break;
+            case 1:
+                mCurrentState = State.INITIALIZING;
+                break;
+            case 2:
+                mCurrentState = State.INITIALIZED;
+                break;
+        }
+
+
+    }
+
     public boolean isFavorite(String musicId) {
         return mFavoriteTracks.contains(musicId);
     }
@@ -209,8 +230,44 @@ public class LocalMusicProvider {
         LogHelper.e(TAG, "buildListsByGenre end");
     }
 
+    private synchronized void buildListsByJamCast() {
+        LogHelper.e(TAG, "buildListsByJamCast start");
+
+        ConcurrentMap<String, List<MediaMetadataCompat>> newMusicListByJamCast = new ConcurrentHashMap<>();
+
+        for (MutableMediaMetadata m : mMusicListById.values()) {
+            String jam = m.metadata.getString(MediaMetadataCompat.METADATA_KEY_GENRE);
+            LogHelper.e(TAG, "jam = "+jam+", m.metadata = "+m.metadata);
+            List<MediaMetadataCompat> list = newMusicListByJamCast.get(jam);
+            if (list == null) {
+                list = new ArrayList<>();
+                newMusicListByJamCast.put(jam, list);
+            }
+            list.add(m.metadata);
+        }
+        mMusicListByJamcast = newMusicListByJamCast;
+        LogHelper.e(TAG, "size = "+newMusicListByJamCast.size());
+
+        LogHelper.e(TAG, "buildListsByJamCast end");
+    }
+
     private synchronized void retrieveMedia() {
         LogHelper.e(TAG, "[retrieveMedia start]");
+
+        switch (mCurrentState)
+        {
+            case NON_INITIALIZED:
+                LogHelper.e(TAG, "mCurrentState = NON_INITIALIZED");
+                break;
+
+            case INITIALIZING:
+                LogHelper.e(TAG, "mCurrentState = INITIALIZING");
+                break;
+            case INITIALIZED:
+                LogHelper.e(TAG, "mCurrentState = INITIALIZED");
+                break;
+        }
+
         try {
             if (mCurrentState == State.NON_INITIALIZED) {
                 mCurrentState = State.INITIALIZING;
@@ -229,7 +286,8 @@ public class LocalMusicProvider {
 
 
 
-                buildListsByGenre();
+                //buildListsByGenre();
+                buildListsByJamCast();
                 mCurrentState = State.INITIALIZED;
             }
         } finally {
@@ -322,5 +380,13 @@ public class LocalMusicProvider {
         return new MediaBrowserCompat.MediaItem(copy.getDescription(),
                 MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
 
+    }
+
+    public boolean getSetState() {
+        return isSetState;
+    }
+
+    public void setSetState(boolean isSet) {
+        isSetState = isSet;
     }
 }
