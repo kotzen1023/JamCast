@@ -37,6 +37,7 @@ public class FileOperation {
         File folder_jam = new File(RootDirectory.getAbsolutePath() + "/.jamCast/");
         File folder_server = new File(RootDirectory.getAbsolutePath() + "/.jamCast/servers");
         File file_temp = new File(RootDirectory.getAbsolutePath() + "/.jamCast/temp");
+        File songListDefault = new File(RootDirectory.getAbsolutePath() + "/.jamCast/default");
 
         if(!folder_jam.exists()) {
             Log.i(TAG, "folder_jam folder not exist");
@@ -76,6 +77,19 @@ public class FileOperation {
             }
             if (!ret)
                 Log.e(TAG, "init_info: failed to create file "+file_temp.getAbsolutePath());
+
+        }
+
+        if(!songListDefault.exists()) {
+            Log.i(TAG, "file:"+songListDefault.getName()+"is not exist");
+
+            try {
+                ret = songListDefault.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (!ret)
+                Log.e(TAG, "init_info: failed to create file "+file_temp.getName());
 
         }
 

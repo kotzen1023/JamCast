@@ -2,16 +2,22 @@ package com.seventhmoon.jamcast.model;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.media.MediaExtractor;
+import android.media.MediaFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.util.Log;
 
 import com.seventhmoon.jamcast.R;
+import com.seventhmoon.jamcast.data.Song;
 import com.seventhmoon.jamcast.utils.LogHelper;
 import com.seventhmoon.jamcast.utils.MediaIDHelper;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -21,6 +27,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static com.seventhmoon.jamcast.data.FileOperation.read_record;
+import static com.seventhmoon.jamcast.data.initData.songList;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_GENRE;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_JAMCAST;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_ROOT;
@@ -37,7 +45,7 @@ public class LocalMusicProvider {
     private final ConcurrentMap<String, MutableMediaMetadata> mMusicListById;
 
     private final Set<String> mFavoriteTracks;
-    public static boolean isSetState = false;
+    //public static boolean isSetState = false;
 
     enum State {
         NON_INITIALIZED, INITIALIZING, INITIALIZED
@@ -254,6 +262,17 @@ public class LocalMusicProvider {
     private synchronized void retrieveMedia() {
         LogHelper.e(TAG, "[retrieveMedia start]");
 
+        //load list from file
+        String message = read_record("Default");
+        String msg[] = message.split("\\|");
+        if (msg.length > 0) {
+            songList.clear();
+            for (int i=0; i<msg.length;i++) {
+                String s = getAudioInfo(msg[i]);
+
+            }
+        }
+
         switch (mCurrentState)
         {
             case NON_INITIALIZED:
@@ -382,11 +401,104 @@ public class LocalMusicProvider {
 
     }
 
-    public boolean getSetState() {
-        return isSetState;
-    }
+    private String getAudioInfo(String filePath) {
+        Log.e(TAG, "<getAudioInfo>");
+        String infoMsg = null;
+        boolean hasFrameRate = false;
 
-    public void setSetState(boolean isSet) {
-        isSetState = isSet;
+        MediaExtractor mex = new MediaExtractor();
+        try {
+            mex.setDataSource(filePath);// the adresss location of the sound on sdcard.
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+
+
+        File file = new File(filePath);
+        Log.d(TAG, "file name: "+file.getName());
+
+        if (mex != null) {
+
+            try {
+                MediaFormat mf = mex.getTrackFormat(0);
+                Log.d(TAG, "file: "+file.getName()+" mf = "+mf.toString());
+                infoMsg = mf.getString(MediaFormat.KEY_MIME);
+                Log.d(TAG, "type: "+infoMsg);
+
+                if (infoMsg.contains("audio")) {
+
+                    Log.d(TAG, "duration(us): " + mf.getLong(MediaFormat.KEY_DURATION));
+                    Log.d(TAG, "channel: " + mf.getInteger(MediaFormat.KEY_CHANNEL_COUNT));
+                    if (mf.toString().contains("channel-mask")) {
+                        Log.d(TAG, "channel mask: " + mf.getInteger(MediaFormat.KEY_CHANNEL_MASK));
+                    }
+                    if (mf.toString().contains("aac-profile")) {
+                        Log.d(TAG, "aac profile: " + mf.getInteger(MediaFormat.KEY_AAC_PROFILE));
+                    }
+
+                    Log.d(TAG, "sample rate: " + mf.getInteger(MediaFormat.KEY_SAMPLE_RATE));
+
+                    if (infoMsg != null) {
+                        Song song = new Song();
+                        song.setName(file.getName());
+                        song.setPath(file.getAbsolutePath());
+                        //song.setDuration((int)(mf.getLong(MediaFormat.KEY_DURATION)/1000));
+                        song.setDuration_u(mf.getLong(MediaFormat.KEY_DURATION));
+                        song.setChannel((byte) mf.getInteger(MediaFormat.KEY_CHANNEL_COUNT));
+                        song.setSample_rate(mf.getInteger(MediaFormat.KEY_SAMPLE_RATE));
+                        song.setMark_a(0);
+                        song.setMark_b((int) (mf.getLong(MediaFormat.KEY_DURATION) / 1000));
+                        songList.add(song);
+
+                    }
+                } else if (infoMsg.contains("video")) { //video
+                    try {
+                        Log.d(TAG, "frame rate : " + mf.getInteger(MediaFormat.KEY_FRAME_RATE));
+                        hasFrameRate = true;
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
+
+                    Log.d(TAG, "height : " + mf.getInteger(MediaFormat.KEY_HEIGHT));
+                    Log.d(TAG, "width : " + mf.getInteger(MediaFormat.KEY_WIDTH));
+                    Log.d(TAG, "duration(us): " + mf.getLong(MediaFormat.KEY_DURATION));
+
+                    /*if (infoMsg != null) {
+                        VideoItem video = new VideoItem();
+                        video.setName(file.getName());
+                        video.setPath(file.getAbsolutePath());
+                        if (hasFrameRate)
+                            video.setFrame_rate(mf.getInteger(MediaFormat.KEY_FRAME_RATE));
+
+                        video.setHeight(mf.getInteger(MediaFormat.KEY_HEIGHT));
+                        video.setWidth(mf.getInteger(MediaFormat.KEY_WIDTH));
+                        video.setDuration_u( mf.getLong(MediaFormat.KEY_DURATION));
+                        video.setMark_a(0);
+                        video.setMark_b((int) (mf.getLong(MediaFormat.KEY_DURATION) / 1000));
+                        addVideoList.add(video);
+
+
+                    }*/
+
+                } else {
+                    Log.e(TAG, "Unknown type");
+                }
+
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            Log.d(TAG, "file: "+file.getName()+" not support");
+        }
+
+        Log.e(TAG, "</getAudioInfo>");
+
+
+
+
+        return infoMsg;
     }
 }

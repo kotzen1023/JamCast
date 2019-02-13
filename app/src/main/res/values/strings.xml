@@ -50,6 +50,7 @@
     
     <!-- menu -->
     <string name="menu_add">Add</string>
+    <string name="menu_clear">Clear</string>
 
     <string name="play_mode_all">All</string>
     <string name="play_mode_shuffle">Shuffle</string>

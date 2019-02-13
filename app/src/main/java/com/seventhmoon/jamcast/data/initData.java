@@ -8,4 +8,7 @@ public class initData {
     //for add songs to list
     public static ArrayList<String> searchList = new ArrayList<>();
     public static ArrayList<Song> addSongList = new ArrayList<>();
+    public static boolean songListChanged = false;
+    public static int screen_width;
+    public static int screen_height;
 }

@@ -166,6 +166,8 @@
         <activity android:name=".ui.FileChooseListActivity" />
 
         <service android:name=".service.SearchFileService" />
+        <service android:name=".service.LoadFileListService" />
+        <service android:name=".service.SaveFileListService" />
     </application>
 
 </manifest>

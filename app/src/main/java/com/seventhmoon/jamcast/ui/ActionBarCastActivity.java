@@ -69,6 +69,7 @@ public class ActionBarCastActivity extends AppCompatActivity {
     private static Toolbar mToolbar;
     private Menu mMenu;
     public static MenuItem menuItemAdd;
+    public static MenuItem menuMore;
     public static MenuItem menuItemSelectAll;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -259,22 +260,23 @@ public class ActionBarCastActivity extends AppCompatActivity {
         }
 
         menuItemAdd = menu.findItem(R.id.action_add);
+        menuMore = menu.findItem(R.id.action_settings);
         menuItemSelectAll = menu.findItem(R.id.action_selectAll);
         switch (activity_called) {
             case 0:
-                menuItemAdd.setVisible(false);
+                menuMore.setVisible(false);
                 menuItemSelectAll.setVisible(false);
                 break;
             case 1:
-                menuItemAdd.setVisible(false);
+                menuMore.setVisible(false);
                 menuItemSelectAll.setVisible(false);
                 break;
             case 2:
-                menuItemAdd.setVisible(true);
+                menuMore.setVisible(true);
                 menuItemSelectAll.setVisible(false);
                 break;
             case 3:
-                menuItemAdd.setVisible(false);
+                menuMore.setVisible(false);
                 menuItemSelectAll.setVisible(true);
                 break;
         }

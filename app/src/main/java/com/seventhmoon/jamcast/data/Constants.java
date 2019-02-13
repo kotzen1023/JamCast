@@ -20,5 +20,10 @@ public class Constants {
         String FILE_CHOOSE_CONFIRM_BUTTON_HIDE = "com.seventhmoon.JamCast.FileChooseConfirmButtonHide";
 
         String FILE_CHOOSE_PATH_CHANGE = "com.seventhmoon.JamCast.FileChoosePathChange";
+        String FILE_SAVE_LIST_START = "com.seventhmoon.JamCast.FileSaveListStart";
+        String FILE_SAVE_LIST_ACTION = "com.seventhmoon.JamCast.FileSaveListAction";
+        String FILE_SAVE_LIST_COMPLETE = "com.seventhmoon.JamCast.FileSaveListComplete";
+        String FILE_LOAD_LIST_ACTION = "com.seventhmoon.JamCast.FileLoadListAction";
+        String FILE_LOAD_LIST_COMPLETE = "com.seventhmoon.JamCast.FileLoadListComplete";
     }
 }

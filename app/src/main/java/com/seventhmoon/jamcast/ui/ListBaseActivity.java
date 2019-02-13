@@ -12,6 +12,8 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.DisplayMetrics;
+import android.util.Log;
 
 import com.seventhmoon.jamcast.LocalMusicService;
 import com.seventhmoon.jamcast.MusicService;
@@ -19,6 +21,9 @@ import com.seventhmoon.jamcast.R;
 import com.seventhmoon.jamcast.utils.LogHelper;
 import com.seventhmoon.jamcast.utils.NetworkHelper;
 import com.seventhmoon.jamcast.utils.ResourceHelper;
+
+import static com.seventhmoon.jamcast.data.initData.screen_height;
+import static com.seventhmoon.jamcast.data.initData.screen_width;
 
 public class ListBaseActivity extends ActionBarCastActivity implements MediaBrowserProvider {
 
@@ -44,6 +49,13 @@ public class ListBaseActivity extends ActionBarCastActivity implements MediaBrow
                             android.R.color.darker_gray));
             setTaskDescription(taskDesc);
         }
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        screen_height = displayMetrics.heightPixels;
+        screen_width = displayMetrics.widthPixels;
+
+        Log.e(TAG, "width = "+screen_width+", height = "+screen_height);
 
         // Connect a media browser just to get the media session token. There are other ways
         // this can be done, for example by sharing the session token directly.

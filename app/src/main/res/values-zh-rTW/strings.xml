@@ -50,6 +50,7 @@
     
     <!-- menu -->
     <string name="menu_add">新增</string>
+    <string name="menu_clear">清除清單</string>
 
     <string name="play_mode_all">全部撥放</string>
     <string name="play_mode_shuffle">隨機撥放</string>

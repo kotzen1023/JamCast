@@ -19,19 +19,26 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.seventhmoon.jamcast.R;
 import com.seventhmoon.jamcast.data.Constants;
 import com.seventhmoon.jamcast.data.FileChooseArrayAdapter;
+import com.seventhmoon.jamcast.service.SaveFileListService;
+import com.seventhmoon.jamcast.service.SearchFileService;
 import com.seventhmoon.jamcast.utils.LogHelper;
 
 import java.io.File;
 
 import static com.seventhmoon.jamcast.data.initData.addSongList;
+import static com.seventhmoon.jamcast.data.initData.screen_width;
 import static com.seventhmoon.jamcast.data.initData.searchList;
 import static com.seventhmoon.jamcast.data.initData.songList;
+import static com.seventhmoon.jamcast.data.initData.songListChanged;
 
 public class FileChooseListActivity extends ListBaseActivity {
 
@@ -50,7 +57,8 @@ public class FileChooseListActivity extends ListBaseActivity {
     private static BroadcastReceiver mReceiver = null;
     private static boolean isRegister = false;
     private Context context;
-
+    RelativeLayout relativeLayout;
+    ProgressBar progressBar = null;
 
     //public static ListView fileChooselistView;
     //public static Button confirm;
@@ -69,6 +77,14 @@ public class FileChooseListActivity extends ListBaseActivity {
         setContentView(R.layout.activity_file_choose);
 
         context = getApplicationContext();
+
+        relativeLayout = findViewById(R.id.chooseRelativeLayout);
+
+        progressBar = new ProgressBar(context,null,android.R.attr.progressBarStyleLarge);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(screen_width/4,screen_width/4);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        relativeLayout.addView(progressBar,params);
+        progressBar.setVisibility(View.GONE);
 
         initializeToolbar(3);
         initializeFromParams(savedInstanceState, getIntent());
@@ -99,8 +115,41 @@ public class FileChooseListActivity extends ListBaseActivity {
                         LogHelper.e(TAG, "=== addSongList ===");
                         //check if search list's song was exist in songList
 
+                        for (int i=0;i<addSongList.size(); i++) {
+                            boolean found_same_song = false;
+                            for (int j=0;j<songList.size();j++) {
+                                if (addSongList.get(i).getPath().equals(songList.get(j).getPath())) {
+
+                                    found_same_song = true;
+
+                                    break;
+                                }
+                            }
+
+                            if (!found_same_song) {
+                                songList.add(addSongList.get(i));
+                                songListChanged = true;
+                            }
+                        }
+
+                        progressBar.setVisibility(View.VISIBLE);
+
+                        //save song list to file
+                        Intent saveintent = new Intent(context, SaveFileListService.class);
+                        saveintent.setAction(Constants.ACTION.FILE_SAVE_LIST_ACTION);
+                        saveintent.putExtra("FILENAME", "Default");
+                        context.startService(saveintent);
 
 
+                        /*Bundle extras = ActivityOptions.makeCustomAnimation(
+                                context, R.anim.fade_in, R.anim.fade_out).toBundle();
+
+                        Class activityClass = null;
+                        activityClass = MusicListActivity.class;
+                        startActivity(new Intent(context, activityClass), extras);
+                        finish();*/
+                    } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.FILE_SAVE_LIST_COMPLETE)) {
+                        progressBar.setVisibility(View.GONE);
 
                         Bundle extras = ActivityOptions.makeCustomAnimation(
                                 context, R.anim.fade_in, R.anim.fade_out).toBundle();
@@ -117,7 +166,7 @@ public class FileChooseListActivity extends ListBaseActivity {
         if (!isRegister) {
             filter = new IntentFilter();
             filter.addAction(Constants.ACTION.ADD_SONG_LIST_COMPLETE);
-
+            filter.addAction(Constants.ACTION.FILE_SAVE_LIST_COMPLETE);
             registerReceiver(mReceiver, filter);
             isRegister = true;
             Log.d(TAG, "registerReceiver mReceiver");

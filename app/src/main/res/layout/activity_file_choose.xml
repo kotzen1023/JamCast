@@ -11,7 +11,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/chooseRelativeLayout">
 
         <include layout="@layout/include_toolbar" android:id="@+id/toolbar_container"/>
 

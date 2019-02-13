@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import static com.seventhmoon.jamcast.data.initData.addSongList;
+import static com.seventhmoon.jamcast.data.initData.songList;
 
 public class LocalJSONSource implements MusicProviderSource {
     private static final String TAG = LogHelper.makeLogTag(LocalJSONSource.class);
@@ -58,8 +59,8 @@ public class LocalJSONSource implements MusicProviderSource {
             ArrayList<MediaMetadataCompat> tracks = new ArrayList<>();
 
             LogHelper.e(TAG, "buildFromList start");
-            for (int i=0; i<addSongList.size(); i++) {
-                tracks.add(buildFromList(addSongList.get(i)));
+            for (int i=0; i<songList.size(); i++) {
+                tracks.add(buildFromList(songList.get(i)));
             }
             LogHelper.e(TAG, "buildFromList end");
 

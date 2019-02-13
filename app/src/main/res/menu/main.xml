@@ -2,12 +2,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
+
     <item
-        android:id="@+id/action_add"
-        android:title="@string/menu_add"
-        android:icon="@drawable/ic_add_white_24dp"
-        app:showAsAction="ifRoom|withText"
-        android:visible="false"/>
+        android:id="@+id/action_settings"
+        android:title=""
+        android:icon="@drawable/baseline_more_vert_white_24"
+        app:showAsAction="always">
+
+        <menu>
+
+            <item
+                android:id="@+id/action_add"
+                android:title="@string/menu_add"
+                android:icon="@drawable/baseline_add_black_24"
+                app:showAsAction="ifRoom|withText" />
+
+            <item
+                android:id="@+id/action_clear"
+                android:title="@string/menu_clear"
+                android:icon="@drawable/baseline_clear_black_24"
+                app:showAsAction="ifRoom|withText" />
+
+        </menu>
+    </item>
+
+
 
     <item
         android:id="@+id/action_selectAll"
