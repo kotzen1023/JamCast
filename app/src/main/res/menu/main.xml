@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
 
+
+
     <item
         android:id="@+id/action_settings"
         android:title=""
@@ -12,16 +14,25 @@
         <menu>
 
             <item
+                android:id="@+id/action_add_list"
+                android:title="@string/menu_add_list"
+                android:icon="@drawable/baseline_add_black_24"
+                app:showAsAction="ifRoom|withText"
+                android:visible="false"/>
+
+            <item
                 android:id="@+id/action_add"
                 android:title="@string/menu_add"
                 android:icon="@drawable/baseline_add_black_24"
-                app:showAsAction="ifRoom|withText" />
+                app:showAsAction="ifRoom|withText"
+                android:visible="false"/>
 
             <item
                 android:id="@+id/action_clear"
                 android:title="@string/menu_clear"
                 android:icon="@drawable/baseline_clear_black_24"
-                app:showAsAction="ifRoom|withText" />
+                app:showAsAction="ifRoom|withText"
+                android:visible="false"/>
 
         </menu>
     </item>

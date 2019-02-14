@@ -49,7 +49,7 @@
     <string name="label_next">Next</string>
     
     <!-- menu -->
-    <string name="menu_add">Add</string>
+    <string name="menu_add">Add Songs</string>
     <string name="menu_clear">Clear</string>
 
     <string name="play_mode_all">All</string>
@@ -76,4 +76,7 @@
     <string name="play_mode_video">Video</string>
     <string name="browse_jamcast">Default List</string>
     <string name="browse_jamcast_subtitle"></string>
+    <string name="menu_add_list">Add List</string>
+    <string name="add_list_dialog_title">List Name (ex. My Favorite</string>
+    <string name="add_list_dialog_desc">Descrtption</string>
 </resources>

@@ -59,9 +59,16 @@ public class LocalJSONSource implements MusicProviderSource {
             ArrayList<MediaMetadataCompat> tracks = new ArrayList<>();
 
             LogHelper.e(TAG, "buildFromList start");
-            for (int i=0; i<songList.size(); i++) {
-                tracks.add(buildFromList(songList.get(i)));
+
+            if (songList.size() > 0) {
+                for (int i=0; i<songList.size(); i++) {
+                    tracks.add(buildFromList(songList.get(i)));
+                }
+            } else {
+                tracks.clear();
             }
+
+
             LogHelper.e(TAG, "buildFromList end");
 
             LogHelper.e(TAG, "iterator end");

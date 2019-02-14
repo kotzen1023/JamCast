@@ -48,6 +48,7 @@ import java.util.List;
 
 import static com.seventhmoon.jamcast.MusicService.EXTRA_CONNECTED_CAST;
 import static com.seventhmoon.jamcast.data.initData.addSongList;
+import static com.seventhmoon.jamcast.data.initData.songList;
 import static com.seventhmoon.jamcast.data.initData.songListChanged;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_EMPTY_ROOT;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_ROOT;
@@ -262,7 +263,7 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
 
         if (songListChanged) {
             songListChanged = false;
-            LogHelper.e(TAG, "addSongList.size() > 0 set state 0");
+            LogHelper.e(TAG, "songListChanged = true, songList = "+songList.size());
             mLocalMusicProvider.setState(0);
         }
 

@@ -49,7 +49,7 @@
     <string name="label_next">Next</string>
     
     <!-- menu -->
-    <string name="menu_add">新增</string>
+    <string name="menu_add">新增歌曲</string>
     <string name="menu_clear">清除清單</string>
 
     <string name="play_mode_all">全部撥放</string>
@@ -76,4 +76,7 @@
     <string name="play_mode_video">影片</string>
     <string name="browse_jamcast">預設播放清單</string>
     <string name="browse_jamcast_subtitle"></string>
+    <string name="menu_add_list">新增撥放清單</string>
+    <string name="add_list_dialog_title">清單名稱 (例如:我的最愛</string>
+    <string name="add_list_dialog_desc">描述</string>
 </resources>

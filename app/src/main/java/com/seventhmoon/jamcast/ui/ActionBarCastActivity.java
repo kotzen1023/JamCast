@@ -2,6 +2,7 @@ package com.seventhmoon.jamcast.ui;
 
 import android.Manifest;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,6 +29,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
@@ -49,8 +51,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.seventhmoon.jamcast.data.FileOperation.clear_record;
 import static com.seventhmoon.jamcast.data.FileOperation.init_folder_and_files;
 
+import static com.seventhmoon.jamcast.data.initData.songList;
+import static com.seventhmoon.jamcast.data.initData.songListChanged;
 import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.currentDir;
 import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.fileChooseArrayAdapter;
 import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.fileChooseConfirm;
@@ -69,6 +74,7 @@ public class ActionBarCastActivity extends AppCompatActivity {
     private static Toolbar mToolbar;
     private Menu mMenu;
     public static MenuItem menuItemAdd;
+    public static MenuItem menuItemAddList;
     public static MenuItem menuMore;
     public static MenuItem menuItemSelectAll;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -260,23 +266,28 @@ public class ActionBarCastActivity extends AppCompatActivity {
         }
 
         menuItemAdd = menu.findItem(R.id.action_add);
+        menuItemAddList = menu.findItem(R.id.action_add_list);
         menuMore = menu.findItem(R.id.action_settings);
         menuItemSelectAll = menu.findItem(R.id.action_selectAll);
         switch (activity_called) {
             case 0:
                 menuMore.setVisible(false);
+                menuItemAddList.setVisible(false);
                 menuItemSelectAll.setVisible(false);
                 break;
             case 1:
                 menuMore.setVisible(false);
+                menuItemAddList.setVisible(false);
                 menuItemSelectAll.setVisible(false);
                 break;
             case 2:
                 menuMore.setVisible(true);
+                menuItemAddList.setVisible(true);
                 menuItemSelectAll.setVisible(false);
                 break;
             case 3:
                 menuMore.setVisible(false);
+                menuItemAddList.setVisible(false);
                 menuItemSelectAll.setVisible(true);
                 break;
         }
@@ -299,6 +310,12 @@ public class ActionBarCastActivity extends AppCompatActivity {
         }
 
         switch (item.getItemId()) {
+            case R.id.action_add_list:
+                Log.e(TAG, "action_add_list click");
+
+                showInputDialog();
+                break;
+
             case R.id.action_add:
                 Log.e(TAG, "action_add click");
                 //Intent intent = new Intent(ActionBarCastActivity.this, FileChooseActivity.class);
@@ -435,7 +452,15 @@ public class ActionBarCastActivity extends AppCompatActivity {
                 }
 
                 break;
+            case R.id.action_clear:
+                Log.e(TAG, "action_clear");
+                songList.clear();
 
+                //write song list file
+                clear_record("Default");
+
+                songListChanged = true;
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -790,5 +815,69 @@ public class ActionBarCastActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", okListener)
                 .create()
                 .show();
+    }
+
+    protected void showInputDialog() {
+
+        // get prompts.xml view
+        /*LayoutInflater layoutInflater = LayoutInflater.from(Nfc_read_app.this);
+        View promptView = layoutInflater.inflate(R.layout.input_dialog, null);*/
+        View promptView = View.inflate(ActionBarCastActivity.this, R.layout.add_list_dialog, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ActionBarCastActivity.this);
+        alertDialogBuilder.setView(promptView);
+
+        //final EditText editFileName = (EditText) promptView.findViewById(R.id.editFileName);
+        //final EditText editUrlInput = promptView.findViewById(R.id.editUrlAddress);
+        //final RadioButton radioBtnLocal = promptView.findViewById(R.id.radioBtnLocal);
+        //final RadioButton radioBtnRemote = promptView.findViewById(R.id.radioBtnRemote);
+        //final EditText editPlayerDown = promptView.findViewById(R.id.editResetPlayerDown);
+        //if (playerUp != null)
+        //    editPlayerUp.setText(playerUp);
+        //if (playerDown != null)
+        //    editPlayerDown.setText(playerDown);
+        // setup a dialog window
+        /*radioBtnLocal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                radioBtnRemote.setChecked(false);
+            }
+        });
+
+        radioBtnRemote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                radioBtnLocal.setChecked(false);
+            }
+        });*/
+
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton(getResources().getString(R.string.confirm), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //resultText.setText("Hello, " + editText.getText());
+                //Log.e(TAG, "input password = " + editText.getText());
+
+                /*if (radioBtnLocal.isChecked()) {
+                    Log.d(TAG, "local checked");
+                    Intent intent = new Intent(MainActivity.this, FileChooseActivity.class);
+                    startActivity(intent);
+                } else if (radioBtnRemote.isChecked()) {
+                    Log.d(TAG, "remote checked");
+                    Intent intent = new Intent(MainActivity.this, RemoteActivity.class);
+                    startActivity(intent);
+                } else {
+                    Log.d(TAG, "no checked");
+                }*/
+
+
+
+            }
+        });
+        alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertDialogBuilder.show();
     }
 }

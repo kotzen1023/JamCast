@@ -243,15 +243,20 @@ public class LocalMusicProvider {
 
         ConcurrentMap<String, List<MediaMetadataCompat>> newMusicListByJamCast = new ConcurrentHashMap<>();
 
-        for (MutableMediaMetadata m : mMusicListById.values()) {
-            String jam = m.metadata.getString(MediaMetadataCompat.METADATA_KEY_GENRE);
-            LogHelper.e(TAG, "jam = "+jam+", m.metadata = "+m.metadata);
-            List<MediaMetadataCompat> list = newMusicListByJamCast.get(jam);
-            if (list == null) {
-                list = new ArrayList<>();
-                newMusicListByJamCast.put(jam, list);
+        if (songList.size() > 0) {
+
+            for (MutableMediaMetadata m : mMusicListById.values()) {
+                String jam = m.metadata.getString(MediaMetadataCompat.METADATA_KEY_GENRE);
+                LogHelper.e(TAG, "jam = " + jam + ", m.metadata = " + m.metadata);
+                List<MediaMetadataCompat> list = newMusicListByJamCast.get(jam);
+                if (list == null) {
+                    list = new ArrayList<>();
+                    newMusicListByJamCast.put(jam, list);
+                }
+                list.add(m.metadata);
             }
-            list.add(m.metadata);
+        } else {
+            newMusicListByJamCast.clear();
         }
         mMusicListByJamcast = newMusicListByJamCast;
         LogHelper.e(TAG, "size = "+newMusicListByJamCast.size());
@@ -262,16 +267,21 @@ public class LocalMusicProvider {
     private synchronized void retrieveMedia() {
         LogHelper.e(TAG, "[retrieveMedia start]");
 
+        songList.clear();
         //load list from file
         String message = read_record("Default");
-        String msg[] = message.split("\\|");
-        if (msg.length > 0) {
-            songList.clear();
-            for (int i=0; i<msg.length;i++) {
-                String s = getAudioInfo(msg[i]);
 
+        if (message != null && message.length() > 0) {
+            String msg[] = message.split("\\|");
+            if (msg.length > 0) {
+
+                for (int i=0; i<msg.length;i++) {
+                    String s = getAudioInfo(msg[i]);
+
+                }
             }
         }
+
 
         switch (mCurrentState)
         {
@@ -333,6 +343,9 @@ public class LocalMusicProvider {
         if (MEDIA_ID_ROOT.equals(mediaId)) {
             mediaItems.add(createBrowsableMediaItemForRoot(resources));
 
+            mediaItems.add(createBrowsableMediaItemForUser(resources, "Rock"));
+            mediaItems.add(createBrowsableMediaItemForUser(resources, "Metal"));
+
         } else if (MEDIA_ID_MUSICS_BY_JAMCAST.equals(mediaId)) {
             for (String genre : getGenres()) {
                 mediaItems.add(createBrowsableMediaItemForGenre(genre, resources));
@@ -358,6 +371,21 @@ public class LocalMusicProvider {
                 .setMediaId(MEDIA_ID_MUSICS_BY_JAMCAST)
                 .setTitle(resources.getString(R.string.browse_jamcast))
                 .setSubtitle(resources.getString(R.string.browse_jamcast_subtitle))
+                .setIconUri(Uri.parse("android.resource://" +
+                        "com.seventhmoon.jamcast/drawable/ic_by_genre"))
+                .build();
+        return new MediaBrowserCompat.MediaItem(description,
+                MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
+    }
+
+    private MediaBrowserCompat.MediaItem createBrowsableMediaItemForUser(Resources resources, String category) {
+
+        LogHelper.e(TAG, "==>createBrowsableMediaItemForUser");
+
+        MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
+                .setMediaId(MEDIA_ID_MUSICS_BY_JAMCAST)
+                .setTitle(category)
+                .setSubtitle("")
                 .setIconUri(Uri.parse("android.resource://" +
                         "com.seventhmoon.jamcast/drawable/ic_by_genre"))
                 .build();
