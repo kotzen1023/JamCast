@@ -37,7 +37,7 @@ public class MusicListActivity extends ListBaseActivity implements MediaBrowserF
     //for add songs to list
     //public static ArrayList<String> searchList = new ArrayList<>();
     //public static ArrayList<Song> addSongList = new ArrayList<>();
-    SongArrayAdapter songArrayAdapter;
+    //SongArrayAdapter songArrayAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

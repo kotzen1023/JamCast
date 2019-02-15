@@ -383,7 +383,7 @@ public class LocalMusicProvider {
         LogHelper.e(TAG, "==>createBrowsableMediaItemForUser");
 
         MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MEDIA_ID_MUSICS_BY_JAMCAST)
+                .setMediaId("__"+category+"__")
                 .setTitle(category)
                 .setSubtitle("")
                 .setIconUri(Uri.parse("android.resource://" +
