@@ -11,4 +11,5 @@ public class initData {
     public static boolean songListChanged = false;
     public static int screen_width;
     public static int screen_height;
+    public static PlayListModule playListModule;
 }

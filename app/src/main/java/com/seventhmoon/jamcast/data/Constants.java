@@ -25,5 +25,8 @@ public class Constants {
         String FILE_SAVE_LIST_COMPLETE = "com.seventhmoon.JamCast.FileSaveListComplete";
         String FILE_LOAD_LIST_ACTION = "com.seventhmoon.JamCast.FileLoadListAction";
         String FILE_LOAD_LIST_COMPLETE = "com.seventhmoon.JamCast.FileLoadListComplete";
+
+        String ACTION_USER_LIST_ADD = "com.seventhmoon.JamCast.ActionUserListAdd";
+        String ACTION_USER_LIST_DELETE = "com.seventhmoon.JamCast.ActionUserListDelete";
     }
 }

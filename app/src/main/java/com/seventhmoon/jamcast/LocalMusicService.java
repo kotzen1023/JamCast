@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.media.MediaRouter;
+import android.util.Log;
 
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -25,6 +27,7 @@ import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.seventhmoon.jamcast.data.Constants;
 import com.seventhmoon.jamcast.model.LocalMusicProvider;
 import com.seventhmoon.jamcast.model.MusicProvider;
 import com.seventhmoon.jamcast.playback.CastPlayback;
@@ -36,6 +39,7 @@ import com.seventhmoon.jamcast.playback.LocalQueueManager;
 import com.seventhmoon.jamcast.playback.Playback;
 import com.seventhmoon.jamcast.playback.PlaybackManager;
 import com.seventhmoon.jamcast.playback.QueueManager;
+import com.seventhmoon.jamcast.service.LoadFileListService;
 import com.seventhmoon.jamcast.ui.NowPlayingActivity;
 import com.seventhmoon.jamcast.utils.CarHelper;
 import com.seventhmoon.jamcast.utils.LogHelper;
@@ -90,6 +94,11 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
     private boolean mIsConnectedToCar;
     private BroadcastReceiver mCarConnectionReceiver;
 
+    private static BroadcastReceiver mReceiver = null;
+    private static boolean isRegister = false;
+
+    Result<List<MediaBrowserCompat.MediaItem>> resultStatic;
+    private static List<MediaBrowserCompat.MediaItem> resultList = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -173,6 +182,48 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
         mMediaRouter = MediaRouter.getInstance(getApplicationContext());
 
         registerCarConnectionReceiver();
+
+
+        IntentFilter filter;
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (intent.getAction() != null) {
+                    if (intent.getAction().equalsIgnoreCase(Constants.ACTION.ACTION_USER_LIST_ADD)) {
+                        Log.d(TAG, "receive ADD_SONG_LIST_COMPLETE !");
+
+                        String title = intent.getStringExtra("TITLE");
+                        String desc = intent.getStringExtra("DESC");
+
+                        Log.e(TAG, "title = "+title);
+                        Log.e(TAG, "desc = "+desc);
+
+                        //mLocalMusicProvider.addList(title);
+
+                        resultList.add(mLocalMusicProvider.createBrowsableMediaItemForUser(title));
+                        notifyChildrenChanged(MEDIA_ID_ROOT);
+
+
+
+
+
+                    } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.ACTION_USER_LIST_DELETE)) {
+
+                    }
+                }
+            }
+        };
+
+        if (!isRegister) {
+            filter = new IntentFilter();
+            filter.addAction(Constants.ACTION.ACTION_USER_LIST_ADD);
+            filter.addAction(Constants.ACTION.ACTION_USER_LIST_DELETE);
+            registerReceiver(mReceiver, filter);
+            isRegister = true;
+            Log.d(TAG, "registerReceiver mReceiver");
+        }
     }
 
     @Override
@@ -219,6 +270,18 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
 
         mDelayedStopHandler.removeCallbacksAndMessages(null);
         mSession.release();
+
+
+        if (isRegister && mReceiver != null) {
+            try {
+                unregisterReceiver(mReceiver);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            isRegister = false;
+            mReceiver = null;
+            Log.d(TAG, "unregisterReceiver mReceiver");
+        }
     }
 
 
@@ -271,17 +334,29 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
         LogHelper.e(TAG, "OnLoadChildren: parentMediaId=", parentMediaId);
         if (MEDIA_ID_EMPTY_ROOT.equals(parentMediaId)) {
             LogHelper.e(TAG, "==>1");
-            result.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
+
+            //result.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
+            resultStatic = result;
+            resultList = new ArrayList<>();
+
+            result.sendResult(resultList);
+
         } else if (mLocalMusicProvider.isInitialized()) {
             LogHelper.e(TAG, "==>2");
             // if music library is ready, return immediately
 
-            LogHelper.e(TAG, "mMusicProvider.getChildren size = "+mLocalMusicProvider.getChildren(parentMediaId, getResources()).size()+", stuff ="+mLocalMusicProvider.getChildren(parentMediaId, getResources()));
+            //LogHelper.e(TAG, "mMusicProvider.getChildren size = "+mLocalMusicProvider.getChildren(parentMediaId, getResources()).size()+", stuff ="+mLocalMusicProvider.getChildren(parentMediaId, getResources()));
 
-            result.sendResult(mLocalMusicProvider.getChildren(parentMediaId, getResources()));
+            //result.sendResult(mLocalMusicProvider.getChildren(parentMediaId, getResources()));
+            resultStatic = result;
+            resultList.clear();
+            resultList = mLocalMusicProvider.getChildren(parentMediaId, getResources());
+            result.sendResult(resultList);
+
         } else {
             LogHelper.e(TAG, "==>3");
             // otherwise, only return results when the music library is retrieved
+            resultStatic = result;
             result.detach();
 
             LogHelper.e(TAG, "mMusicProvider.getChildren size = "+mLocalMusicProvider.getChildren(parentMediaId, getResources()).size()+", stuff ="+mLocalMusicProvider.getChildren(parentMediaId, getResources()));
@@ -290,7 +365,10 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
             mLocalMusicProvider.retrieveMediaAsync(new LocalMusicProvider.Callback() {
                 @Override
                 public void onMusicCatalogReady(boolean success) {
-                    result.sendResult(mLocalMusicProvider.getChildren(parentMediaId, getResources()));
+                    //result.sendResult(mLocalMusicProvider.getChildren(parentMediaId, getResources()));
+                    resultList.clear();
+                    resultList = mLocalMusicProvider.getChildren(parentMediaId, getResources());
+                    result.sendResult(resultList);
                 }
             });
         }
@@ -428,4 +506,8 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
         public void onSessionSuspended(CastSession session, int reason) {
         }
     }
+
+
+
+
 }

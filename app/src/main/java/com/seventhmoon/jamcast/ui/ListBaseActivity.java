@@ -1,7 +1,12 @@
 package com.seventhmoon.jamcast.ui;
 
 import android.app.ActivityManager;
+import android.app.ActivityOptions;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,16 +19,22 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 
 import com.seventhmoon.jamcast.LocalMusicService;
 import com.seventhmoon.jamcast.MusicService;
 import com.seventhmoon.jamcast.R;
+import com.seventhmoon.jamcast.data.Constants;
+import com.seventhmoon.jamcast.service.SaveFileListService;
 import com.seventhmoon.jamcast.utils.LogHelper;
 import com.seventhmoon.jamcast.utils.NetworkHelper;
 import com.seventhmoon.jamcast.utils.ResourceHelper;
 
+import static com.seventhmoon.jamcast.data.initData.addSongList;
 import static com.seventhmoon.jamcast.data.initData.screen_height;
 import static com.seventhmoon.jamcast.data.initData.screen_width;
+import static com.seventhmoon.jamcast.data.initData.songList;
+import static com.seventhmoon.jamcast.data.initData.songListChanged;
 
 public class ListBaseActivity extends ActionBarCastActivity implements MediaBrowserProvider {
 
@@ -31,6 +42,9 @@ public class ListBaseActivity extends ActionBarCastActivity implements MediaBrow
 
     private MediaBrowserCompat mMediaBrowser;
     private PlaybackControlsFragment mControlsFragment;
+
+    private static BroadcastReceiver mReceiver = null;
+    private static boolean isRegister = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,6 +76,39 @@ public class ListBaseActivity extends ActionBarCastActivity implements MediaBrow
 
         mMediaBrowser = new MediaBrowserCompat(this,
                 new ComponentName(this, LocalMusicService.class), mConnectionCallback, null);
+
+        /*IntentFilter filter;
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (intent.getAction() != null) {
+                    if (intent.getAction().equalsIgnoreCase(Constants.ACTION.ACTION_USER_LIST_ADD)) {
+                        Log.d(TAG, "receive ADD_SONG_LIST_COMPLETE !");
+
+                        String title = intent.getStringExtra("TITLE");
+                        String desc = intent.getStringExtra("DESC");
+
+                        Log.e(TAG, "title = "+title);
+                        Log.e(TAG, "desc = "+desc);
+
+
+                    } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.ACTION_USER_LIST_DELETE)) {
+
+                    }
+                }
+            }
+        };
+
+        if (!isRegister) {
+            filter = new IntentFilter();
+            filter.addAction(Constants.ACTION.ACTION_USER_LIST_ADD);
+            filter.addAction(Constants.ACTION.ACTION_USER_LIST_DELETE);
+            registerReceiver(mReceiver, filter);
+            isRegister = true;
+            Log.d(TAG, "registerReceiver mReceiver");
+        }*/
 
 
 
@@ -100,6 +147,17 @@ public class ListBaseActivity extends ActionBarCastActivity implements MediaBrow
     @Override
     protected void onDestroy() {
         LogHelper.e(TAG, "ListBaseActivity onDestroy");
+
+        /*if (isRegister && mReceiver != null) {
+            try {
+                unregisterReceiver(mReceiver);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            isRegister = false;
+            mReceiver = null;
+            Log.d(TAG, "unregisterReceiver mReceiver");
+        }*/
 
         super.onDestroy();
     }

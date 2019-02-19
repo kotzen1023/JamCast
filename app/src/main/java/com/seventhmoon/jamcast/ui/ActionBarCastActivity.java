@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,6 +30,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -40,8 +42,10 @@ import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.seventhmoon.jamcast.R;
+import com.seventhmoon.jamcast.data.AppDatabase;
 import com.seventhmoon.jamcast.data.Constants;
 import com.seventhmoon.jamcast.data.FileChooseItem;
+import com.seventhmoon.jamcast.data.PlayListModule;
 import com.seventhmoon.jamcast.data.initData;
 import com.seventhmoon.jamcast.utils.LogHelper;
 
@@ -89,6 +93,9 @@ public class ActionBarCastActivity extends AppCompatActivity {
 
     private static BroadcastReceiver mReceiver = null;
     private static boolean isRegister = false;
+    //public static String AddListTitle = "";
+    //public static String AddListDesc = "";
+    private Context context;
 
     private CastStateListener mCastStateListener = new CastStateListener() {
         @Override
@@ -165,6 +172,8 @@ public class ActionBarCastActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.e(TAG, "ActionBarCastActivity onCreate");
 
+        context = getApplicationContext();
+
         int playServicesAvailable =
                 GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
 
@@ -178,7 +187,22 @@ public class ActionBarCastActivity extends AppCompatActivity {
             if (!initData.isInit) {
                 LogHelper.e(TAG, "initData");
                 initData.isInit = true;
+
+                /*
+                AppDatabase db = Room.databaseBuilder(
+                    getApplicationContext(),
+                    AppDatabase.class,
+                    "playlist_db")
+                    .allowMainThreadQueries()
+                    .build();
+                 */
+
+
+                initData.playListModule = new PlayListModule();
+                initData.playListModule.providePlayListDatabase(context);
             }
+
+
 
         } else {
             if(checkAndRequestPermissions()) {
@@ -187,7 +211,11 @@ public class ActionBarCastActivity extends AppCompatActivity {
                 if (!initData.isInit) {
                     LogHelper.e(TAG, "initData");
                     initData.isInit = true;
+                    initData.playListModule = new PlayListModule();
+                    initData.playListModule.providePlayListDatabase(context);
                 }
+
+
             }
         }
 
@@ -827,6 +855,9 @@ public class ActionBarCastActivity extends AppCompatActivity {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ActionBarCastActivity.this);
         alertDialogBuilder.setView(promptView);
 
+        final EditText editTextAddTitle = promptView.findViewById(R.id.editTextAddListTitle);
+        final EditText editTextAddDesc = promptView.findViewById(R.id.editTextAddListDesc);
+
         //final EditText editFileName = (EditText) promptView.findViewById(R.id.editFileName);
         //final EditText editUrlInput = promptView.findViewById(R.id.editUrlAddress);
         //final RadioButton radioBtnLocal = promptView.findViewById(R.id.radioBtnLocal);
@@ -854,6 +885,17 @@ public class ActionBarCastActivity extends AppCompatActivity {
         alertDialogBuilder.setCancelable(false);
         alertDialogBuilder.setPositiveButton(getResources().getString(R.string.confirm), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+
+                //AddListTitle = editTextAddTitle.getText().toString();
+                //AddListDesc = editTextAddDesc.getText().toString();
+
+                Intent scanIntent = new Intent();
+                scanIntent.setAction(Constants.ACTION.ACTION_USER_LIST_ADD);
+                scanIntent.putExtra("TITLE", editTextAddTitle.getText().toString());
+                scanIntent.putExtra("DESC", editTextAddDesc.getText().toString());
+                sendBroadcast(scanIntent);
+
+
                 //resultText.setText("Hello, " + editText.getText());
                 //Log.e(TAG, "input password = " + editText.getText());
 

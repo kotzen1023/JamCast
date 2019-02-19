@@ -343,8 +343,8 @@ public class LocalMusicProvider {
         if (MEDIA_ID_ROOT.equals(mediaId)) {
             mediaItems.add(createBrowsableMediaItemForRoot(resources));
 
-            mediaItems.add(createBrowsableMediaItemForUser(resources, "Rock"));
-            mediaItems.add(createBrowsableMediaItemForUser(resources, "Metal"));
+            mediaItems.add(createBrowsableMediaItemForUser("Rock"));
+            mediaItems.add(createBrowsableMediaItemForUser("Metal"));
 
         } else if (MEDIA_ID_MUSICS_BY_JAMCAST.equals(mediaId)) {
             for (String genre : getGenres()) {
@@ -378,7 +378,7 @@ public class LocalMusicProvider {
                 MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
     }
 
-    private MediaBrowserCompat.MediaItem createBrowsableMediaItemForUser(Resources resources, String category) {
+    public MediaBrowserCompat.MediaItem createBrowsableMediaItemForUser(String category) {
 
         LogHelper.e(TAG, "==>createBrowsableMediaItemForUser");
 
@@ -528,5 +528,9 @@ public class LocalMusicProvider {
 
 
         return infoMsg;
+    }
+
+    public void addList(String title) {
+
     }
 }
