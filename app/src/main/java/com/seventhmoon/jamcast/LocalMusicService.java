@@ -7,11 +7,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -28,18 +26,14 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.seventhmoon.jamcast.data.Constants;
+import com.seventhmoon.jamcast.data.PlayListItem;
 import com.seventhmoon.jamcast.model.LocalMusicProvider;
-import com.seventhmoon.jamcast.model.MusicProvider;
-import com.seventhmoon.jamcast.playback.CastPlayback;
+import com.seventhmoon.jamcast.persistence.PlayList;
 import com.seventhmoon.jamcast.playback.LocalCastPlayback;
 import com.seventhmoon.jamcast.playback.LocalLocalPlayBack;
-import com.seventhmoon.jamcast.playback.LocalPlayback;
 import com.seventhmoon.jamcast.playback.LocalPlaybackManager;
 import com.seventhmoon.jamcast.playback.LocalQueueManager;
 import com.seventhmoon.jamcast.playback.Playback;
-import com.seventhmoon.jamcast.playback.PlaybackManager;
-import com.seventhmoon.jamcast.playback.QueueManager;
-import com.seventhmoon.jamcast.service.LoadFileListService;
 import com.seventhmoon.jamcast.ui.NowPlayingActivity;
 import com.seventhmoon.jamcast.utils.CarHelper;
 import com.seventhmoon.jamcast.utils.LogHelper;
@@ -49,9 +43,10 @@ import com.seventhmoon.jamcast.utils.WearHelper;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import static com.seventhmoon.jamcast.MusicService.EXTRA_CONNECTED_CAST;
-import static com.seventhmoon.jamcast.data.initData.addSongList;
+import static com.seventhmoon.jamcast.data.initData.db;
+import static com.seventhmoon.jamcast.data.initData.playList;
 import static com.seventhmoon.jamcast.data.initData.songList;
 import static com.seventhmoon.jamcast.data.initData.songListChanged;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_EMPTY_ROOT;
@@ -200,9 +195,29 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
                         Log.e(TAG, "title = "+title);
                         Log.e(TAG, "desc = "+desc);
 
+                        //check list if there exists the same title
+                        boolean found = false;
+                        for (int i=0; i<playList.size(); i++) {
+                            if (playList.get(i).getTitle().equals(title)) {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (!found) { //not found in the list, then add it into list
+                            PlayList item = new PlayList(UUID.randomUUID().toString(), title, desc);
+                            //item.setTitle(title);
+                            //item.setDesc(desc);
+                            playList.add(item);
+                            db.playListDao().insert(item);
+                        }
+
+                        //write to database
+
+
                         //mLocalMusicProvider.addList(title);
 
-                        resultList.add(mLocalMusicProvider.createBrowsableMediaItemForUser(title));
+                        //resultList.add(mLocalMusicProvider.createBrowsableMediaItemForUser(title));
                         notifyChildrenChanged(MEDIA_ID_ROOT);
 
 

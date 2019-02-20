@@ -1,6 +1,10 @@
 package com.seventhmoon.jamcast.data;
 
+import com.seventhmoon.jamcast.persistence.PlayList;
+import com.seventhmoon.jamcast.persistence.PlayListDatabase;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class initData {
     public static boolean isInit = false;
@@ -11,5 +15,7 @@ public class initData {
     public static boolean songListChanged = false;
     public static int screen_width;
     public static int screen_height;
-    public static PlayListModule playListModule;
+    //public static PlayListModule playListModule;
+    public static PlayListDatabase db;
+    public static List<PlayList> playList = new ArrayList<>();
 }

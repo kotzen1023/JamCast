@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static com.seventhmoon.jamcast.data.FileOperation.read_record;
+import static com.seventhmoon.jamcast.data.initData.playList;
 import static com.seventhmoon.jamcast.data.initData.songList;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_GENRE;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_JAMCAST;
@@ -343,8 +344,12 @@ public class LocalMusicProvider {
         if (MEDIA_ID_ROOT.equals(mediaId)) {
             mediaItems.add(createBrowsableMediaItemForRoot(resources));
 
-            mediaItems.add(createBrowsableMediaItemForUser("Rock"));
-            mediaItems.add(createBrowsableMediaItemForUser("Metal"));
+            for (int i=0; i<playList.size(); i++) {
+                mediaItems.add(createBrowsableMediaItemForUser(playList.get(i).getTitle()));
+            }
+
+            //mediaItems.add(createBrowsableMediaItemForUser("Rock"));
+            //mediaItems.add(createBrowsableMediaItemForUser("Metal"));
 
         } else if (MEDIA_ID_MUSICS_BY_JAMCAST.equals(mediaId)) {
             for (String genre : getGenres()) {

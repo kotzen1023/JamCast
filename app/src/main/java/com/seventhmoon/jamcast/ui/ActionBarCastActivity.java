@@ -9,7 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -31,7 +30,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
@@ -42,11 +40,10 @@ import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.seventhmoon.jamcast.R;
-import com.seventhmoon.jamcast.data.AppDatabase;
 import com.seventhmoon.jamcast.data.Constants;
 import com.seventhmoon.jamcast.data.FileChooseItem;
-import com.seventhmoon.jamcast.data.PlayListModule;
 import com.seventhmoon.jamcast.data.initData;
+import com.seventhmoon.jamcast.persistence.PlayListDatabase;
 import com.seventhmoon.jamcast.utils.LogHelper;
 
 import java.io.File;
@@ -58,8 +55,11 @@ import java.util.Map;
 import static com.seventhmoon.jamcast.data.FileOperation.clear_record;
 import static com.seventhmoon.jamcast.data.FileOperation.init_folder_and_files;
 
+import static com.seventhmoon.jamcast.data.initData.db;
+import static com.seventhmoon.jamcast.data.initData.playList;
 import static com.seventhmoon.jamcast.data.initData.songList;
 import static com.seventhmoon.jamcast.data.initData.songListChanged;
+import static com.seventhmoon.jamcast.persistence.PlayListDatabase.DATABASE_NAME;
 import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.currentDir;
 import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.fileChooseArrayAdapter;
 import static com.seventhmoon.jamcast.ui.FileChooseBrowserFragment.fileChooseConfirm;
@@ -188,6 +188,14 @@ public class ActionBarCastActivity extends AppCompatActivity {
                 LogHelper.e(TAG, "initData");
                 initData.isInit = true;
 
+                db = Room.databaseBuilder(
+                        getApplicationContext(),
+                        PlayListDatabase.class,
+                        DATABASE_NAME)
+                        .allowMainThreadQueries()
+                        .build();
+
+                playList = db.playListDao().getAll();
                 /*
                 AppDatabase db = Room.databaseBuilder(
                     getApplicationContext(),
@@ -198,8 +206,8 @@ public class ActionBarCastActivity extends AppCompatActivity {
                  */
 
 
-                initData.playListModule = new PlayListModule();
-                initData.playListModule.providePlayListDatabase(context);
+                //initData.playListModule = new PlayListModule();
+                //initData.playListModule.providePlayListDatabase(context);
             }
 
 
@@ -211,8 +219,17 @@ public class ActionBarCastActivity extends AppCompatActivity {
                 if (!initData.isInit) {
                     LogHelper.e(TAG, "initData");
                     initData.isInit = true;
-                    initData.playListModule = new PlayListModule();
-                    initData.playListModule.providePlayListDatabase(context);
+
+                    db = Room.databaseBuilder(
+                            getApplicationContext(),
+                            PlayListDatabase.class,
+                            DATABASE_NAME)
+                            .allowMainThreadQueries()
+                            .build();
+
+                    playList = db.playListDao().getAll();
+                    //initData.playListModule = new PlayListModule();
+                    //initData.playListModule.providePlayListDatabase(context);
                 }
 
 
