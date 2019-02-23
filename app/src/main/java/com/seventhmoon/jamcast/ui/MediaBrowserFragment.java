@@ -23,12 +23,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.seventhmoon.jamcast.R;
+import com.seventhmoon.jamcast.data.Constants;
+import com.seventhmoon.jamcast.data.initData;
 import com.seventhmoon.jamcast.utils.LogHelper;
 import com.seventhmoon.jamcast.utils.MediaIDHelper;
 import com.seventhmoon.jamcast.utils.NetworkHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.seventhmoon.jamcast.data.initData.current_mMediaId;
+import static com.seventhmoon.jamcast.data.initData.songList;
+import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_ROOT;
 
 public class MediaBrowserFragment extends Fragment {
     private static final String TAG = LogHelper.makeLogTag(MediaBrowserFragment.class);
@@ -49,6 +55,28 @@ public class MediaBrowserFragment extends Fragment {
             if (mMediaId != null) {
 
                 LogHelper.e(TAG, "onReceive mMediaId = "+mMediaId);
+                current_mMediaId = mMediaId;
+
+                if (mMediaId.equals(MEDIA_ID_ROOT)) {
+                    LogHelper.e(TAG, "root");
+
+                    if (initData.globalMenuItemAdd != null && initData.globalMenuItemAddList != null) {
+                        initData.globalMenuItemAdd.setVisible(false);
+                        initData.globalMenuItemAddList.setVisible(true);
+                    }
+                    //Intent scanIntent = new Intent();
+                    //scanIntent.setAction(Constants.ACTION.ACTION_USER_LIST_ADD_SONG_HIDE);
+                    //context.sendBroadcast(scanIntent);
+                } else {
+                    LogHelper.e(TAG, "not root");
+                    //Intent scanIntent = new Intent();
+                    //scanIntent.setAction(Constants.ACTION.ACTION_USER_LIST_ADD_SONG_SHOW);
+                    //context.sendBroadcast(scanIntent);
+                    if (initData.globalMenuItemAdd != null && initData.globalMenuItemAddList != null) {
+                        initData.globalMenuItemAdd.setVisible(true);
+                        initData.globalMenuItemAddList.setVisible(false);
+                    }
+                }
 
                 boolean isOnline = NetworkHelper.isOnline(context);
                 if (isOnline != oldOnline) {
@@ -251,6 +279,8 @@ public class MediaBrowserFragment extends Fragment {
             } else if (forceError) {
                 // Finally, if the caller requested to show error, show a generic message:
                 mErrorMessage.setText(R.string.error_loading_media);
+
+
                 showError = true;
             }
         }
@@ -261,7 +291,7 @@ public class MediaBrowserFragment extends Fragment {
     }
 
     private void updateTitle() {
-        if (MediaIDHelper.MEDIA_ID_ROOT.equals(mMediaId)) {
+        if (MEDIA_ID_ROOT.equals(mMediaId)) {
             mMediaFragmentListener.setToolbarTitle(null);
             return;
         }
@@ -280,7 +310,7 @@ public class MediaBrowserFragment extends Fragment {
     private static class BrowseAdapter extends ArrayAdapter<MediaBrowserCompat.MediaItem> {
 
         public BrowseAdapter(Activity context) {
-            super(context, R.layout.media_list_item, new ArrayList<MediaBrowserCompat.MediaItem>());
+            super(context, R.layout.media_list_swipe_item, new ArrayList<MediaBrowserCompat.MediaItem>());
         }
 
         @NonNull
@@ -290,7 +320,7 @@ public class MediaBrowserFragment extends Fragment {
 
             MediaBrowserCompat.MediaItem item = getItem(position);
             return MediaItemViewHolder.setupListView((Activity) getContext(), convertView, parent,
-                    item);
+                    item, position);
         }
     }
 

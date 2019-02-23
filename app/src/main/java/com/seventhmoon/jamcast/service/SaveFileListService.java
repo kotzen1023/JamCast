@@ -2,19 +2,17 @@ package com.seventhmoon.jamcast.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.media.MediaExtractor;
-import android.media.MediaFormat;
+
 import android.util.Log;
 
 import com.seventhmoon.jamcast.data.Constants;
-import com.seventhmoon.jamcast.data.Song;
 
-import java.io.File;
-import java.io.IOException;
 
-import static com.seventhmoon.jamcast.data.FileOperation.append_record;
+
+import static com.seventhmoon.jamcast.data.FileOperation.append_record_local;
 import static com.seventhmoon.jamcast.data.FileOperation.clear_record;
-import static com.seventhmoon.jamcast.data.FileOperation.read_record;
+
+import static com.seventhmoon.jamcast.data.initData.localSongList;
 import static com.seventhmoon.jamcast.data.initData.songList;
 
 public class SaveFileListService extends IntentService {
@@ -45,7 +43,9 @@ public class SaveFileListService extends IntentService {
                 Log.i(TAG, "FILE_SAVE_LIST_ACTION");
             }
 
-            if (songList.size() > 0) {
+            String mediaId = filename;
+
+            /*if (songList.size() > 0) {
                 clear_record(filename);
                 String record = "";
                 for (int i=0;i<songList.size(); i++) {
@@ -57,7 +57,23 @@ public class SaveFileListService extends IntentService {
                     }
                 }
 
-                append_record(record, filename);
+                append_record_local(record, filename);
+            }*/
+
+            if (localSongList.get(mediaId) != null) {
+                clear_record(filename);
+
+                String record = "";
+                for (int i=0;i<localSongList.get(mediaId).size(); i++) {
+                    if (i==0) {
+                        record = localSongList.get(mediaId).get(i).getPath();
+
+                    } else {
+                        record += "|"+localSongList.get(mediaId).get(i).getPath();
+                    }
+                }
+
+                append_record_local(record, filename);
             }
         }
 

@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import static com.seventhmoon.jamcast.data.initData.searchList;
+
 public class FileOperation {
     private static final String TAG = FileOperation.class.getName();
 
@@ -35,8 +37,9 @@ public class FileOperation {
         }
 
         File folder_jam = new File(RootDirectory.getAbsolutePath() + "/.jamCast/");
-        File folder_server = new File(RootDirectory.getAbsolutePath() + "/.jamCast/servers");
-        File file_temp = new File(RootDirectory.getAbsolutePath() + "/.jamCast/temp");
+        File folder_jam_local = new File(RootDirectory.getAbsolutePath() + "/.jamCast/local");
+        //File folder_server = new File(RootDirectory.getAbsolutePath() + "/.jamCast/servers");
+        //File file_temp = new File(RootDirectory.getAbsolutePath() + "/.jamCast/temp");
         File songListDefault = new File(RootDirectory.getAbsolutePath() + "/.jamCast/default");
 
         if(!folder_jam.exists()) {
@@ -53,7 +56,21 @@ public class FileOperation {
                 Log.e(TAG, "init_info: failed to create hidden file");
         }
 
-        if(!folder_server.exists()) {
+        if(!folder_jam_local.exists()) {
+            Log.i(TAG, "folder_jam_local folder not exist");
+            ret = folder_jam_local.mkdirs();
+            if (!ret)
+                Log.e(TAG, "folder_jam_local: failed to mkdir hidden");
+            try {
+                ret = folder_jam_local.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (!ret)
+                Log.e(TAG, "init_info: failed to create hidden file");
+        }
+
+        /*if(!folder_server.exists()) {
             Log.i(TAG, "folder_server folder not exist");
             ret = folder_server.mkdirs();
             if (!ret)
@@ -96,7 +113,7 @@ public class FileOperation {
         while(true) {
             if(folder_jam.exists() && folder_server.exists() && file_temp.exists())
                 break;
-        }
+        }*/
 
         Log.i(TAG, "init_folder_and_files() ---  end  ---");
         return ret;
@@ -230,8 +247,23 @@ public class FileOperation {
         return ret;
     }
 
-    public static boolean append_record(String message, String fileName) {
-        Log.i(TAG, "append_record --- start ---");
+    public static File get_local_dir() {
+        File file=null;
+
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            //path = Environment.getExternalStorageDirectory();
+            RootDirectory = Environment.getExternalStorageDirectory();
+
+            file = new File(RootDirectory.getAbsolutePath() + "/.jamCast/local");
+        }
+
+
+
+        return file;
+    }
+
+    public static boolean append_record_local(String message, String fileName) {
+        Log.i(TAG, "append_record_local --- start ---");
         boolean ret = true;
 
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -239,7 +271,7 @@ public class FileOperation {
             RootDirectory = Environment.getExternalStorageDirectory();
         }
         //check folder
-        File folder = new File(RootDirectory.getAbsolutePath() + "/.jamCast");
+        File folder = new File(RootDirectory.getAbsolutePath() + "/.jamCast/local");
 
         if(!folder.exists()) {
             Log.i(TAG, "folder not exist");
@@ -275,27 +307,27 @@ public class FileOperation {
         }
 
 
-        Log.i(TAG, "append_record --- end (success) ---");
+        Log.i(TAG, "append_record_local --- end (success) ---");
 
         return ret;
     }
 
-    public static String read_record(String fileName) {
+    public static String read_record_local(String fileName) {
 
 
-        Log.i(TAG, "read_record() --- start ---");
+        Log.i(TAG, "read_record_local() --- start ---");
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             //path = Environment.getExternalStorageDirectory();
             RootDirectory = Environment.getExternalStorageDirectory();
         }
 
-        File file = new File(RootDirectory.getAbsolutePath() + "/.jamCast/"+fileName);
+        File file = new File(RootDirectory.getAbsolutePath() + "/.jamCast/local/"+fileName);
         String message = "";
 
         //photo
         if (!file.exists())
         {
-            Log.i(TAG, "read_record() "+file.getAbsolutePath()+ " not exist");
+            Log.i(TAG, "read_record_local() "+file.getAbsolutePath()+ " not exist");
 
             return "";
         }
@@ -316,7 +348,7 @@ public class FileOperation {
 
             Log.d(TAG, "message = "+message);
 
-            Log.i(TAG, "read_record() --- end ---");
+            Log.i(TAG, "read_record_local() --- end ---");
         }
 
 
@@ -426,6 +458,4 @@ public class FileOperation {
 
         return ret;
     }
-
-
 }

@@ -88,7 +88,7 @@ public class MusicListFragment extends Fragment {
     private static class BrowseAdapter extends ArrayAdapter<MediaBrowserCompat.MediaItem> {
 
         public BrowseAdapter(Activity context) {
-            super(context, R.layout.media_list_item, new ArrayList<MediaBrowserCompat.MediaItem>());
+            super(context, R.layout.media_list_swipe_item, new ArrayList<MediaBrowserCompat.MediaItem>());
         }
 
         @NonNull
@@ -96,7 +96,7 @@ public class MusicListFragment extends Fragment {
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             MediaBrowserCompat.MediaItem item = getItem(position);
             return MediaItemViewHolder.setupListView((Activity) getContext(), convertView, parent,
-                    item);
+                    item, position);
         }
     }
 

@@ -44,6 +44,8 @@ public class LocalQueueHelper {
             tracks = localMusicProvider.getMusicsByGenre(categoryValue);
         } else if (categoryType.equals(MEDIA_ID_MUSICS_BY_SEARCH)) {
             tracks = localMusicProvider.searchMusicBySongTitle(categoryValue);
+        } else {
+
         }
 
         if (tracks == null) {

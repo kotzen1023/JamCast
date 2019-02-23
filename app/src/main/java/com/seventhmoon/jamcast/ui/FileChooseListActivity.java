@@ -28,13 +28,17 @@ import android.widget.TextView;
 import com.seventhmoon.jamcast.R;
 import com.seventhmoon.jamcast.data.Constants;
 import com.seventhmoon.jamcast.data.FileChooseArrayAdapter;
+import com.seventhmoon.jamcast.data.Song;
 import com.seventhmoon.jamcast.service.SaveFileListService;
 import com.seventhmoon.jamcast.service.SearchFileService;
 import com.seventhmoon.jamcast.utils.LogHelper;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static com.seventhmoon.jamcast.data.initData.addSongList;
+import static com.seventhmoon.jamcast.data.initData.current_mMediaId;
+import static com.seventhmoon.jamcast.data.initData.localSongList;
 import static com.seventhmoon.jamcast.data.initData.screen_width;
 import static com.seventhmoon.jamcast.data.initData.searchList;
 import static com.seventhmoon.jamcast.data.initData.songList;
@@ -117,27 +121,52 @@ public class FileChooseListActivity extends ListBaseActivity {
 
                         for (int i=0;i<addSongList.size(); i++) {
                             boolean found_same_song = false;
-                            for (int j=0;j<songList.size();j++) {
+
+
+                            /*for (int j=0;j<songList.size();j++) {
                                 if (addSongList.get(i).getPath().equals(songList.get(j).getPath())) {
 
                                     found_same_song = true;
 
                                     break;
                                 }
+                            }*/
+                            LogHelper.e(TAG, "current_mMediaId = "+current_mMediaId);
+
+                            if (localSongList.get(current_mMediaId) != null) {
+                                for (int j=0; j<localSongList.get(current_mMediaId).size();j++) {
+                                    if (addSongList.get(i).getPath().equals(localSongList.get(current_mMediaId).get(j).getPath())) {
+
+                                        found_same_song = true;
+
+                                        break;
+                                    }
+                                }
+                            } else {
+                                localSongList.put(current_mMediaId, new ArrayList<Song>());
                             }
 
+
                             if (!found_same_song) {
-                                songList.add(addSongList.get(i));
+                                //songList.add(addSongList.get(i));
+                                localSongList.get(current_mMediaId).add(addSongList.get(i));
+
                                 songListChanged = true;
                             }
                         }
+
+                        LogHelper.e(TAG, "=== localSongList.get("+current_mMediaId+") ===");
+                        for (int i=0; i<localSongList.get(current_mMediaId).size(); i++) {
+                            LogHelper.e(TAG, localSongList.get(current_mMediaId).get(i).getName());
+                        }
+                        LogHelper.e(TAG, "=== localSongList.get("+current_mMediaId+") ===");
 
                         progressBar.setVisibility(View.VISIBLE);
 
                         //save song list to file
                         Intent saveintent = new Intent(context, SaveFileListService.class);
                         saveintent.setAction(Constants.ACTION.FILE_SAVE_LIST_ACTION);
-                        saveintent.putExtra("FILENAME", "Default");
+                        saveintent.putExtra("FILENAME", current_mMediaId);
                         context.startService(saveintent);
 
 

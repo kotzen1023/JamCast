@@ -167,6 +167,7 @@ public class MusicListActivity extends ListBaseActivity implements MediaBrowserF
     public void onMediaItemSelected(MediaBrowserCompat.MediaItem item) {
         Log.d(TAG, "onMediaItemSelected, mediaId=" + item.getMediaId());
         if (item.isPlayable()) {
+            LogHelper.e(TAG, "item.isPlayable()");
             MediaControllerCompat.getMediaController(MusicListActivity.this).getTransportControls()
                     .playFromMediaId(item.getMediaId(), null);
         } else if (item.isBrowsable()) {

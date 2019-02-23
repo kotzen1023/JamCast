@@ -28,5 +28,8 @@ public class Constants {
 
         String ACTION_USER_LIST_ADD = "com.seventhmoon.JamCast.ActionUserListAdd";
         String ACTION_USER_LIST_DELETE = "com.seventhmoon.JamCast.ActionUserListDelete";
+
+        String ACTION_USER_LIST_ADD_SONG_SHOW = "com.seventhmoon.JamCast.ActionUserListAddSongShow";
+        String ACTION_USER_LIST_ADD_SONG_HIDE = "com.seventhmoon.JamCast.ActionUserListAddSongHide";
     }
 }

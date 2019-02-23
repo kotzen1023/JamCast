@@ -27,7 +27,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static com.seventhmoon.jamcast.data.FileOperation.read_record;
+import static com.seventhmoon.jamcast.data.FileOperation.get_local_dir;
+import static com.seventhmoon.jamcast.data.FileOperation.read_record_local;
+import static com.seventhmoon.jamcast.data.initData.localSongList;
 import static com.seventhmoon.jamcast.data.initData.playList;
 import static com.seventhmoon.jamcast.data.initData.songList;
 import static com.seventhmoon.jamcast.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_GENRE;
@@ -126,6 +128,14 @@ public class LocalMusicProvider {
                 result.add(track.metadata);
             }
         }
+        return result;
+    }
+
+    public List<MediaMetadataCompat> getMusicsBylocalSongList(String mediaId) {
+        ArrayList<MediaMetadataCompat> result = new ArrayList<>();
+
+
+
         return result;
     }
 
@@ -269,20 +279,65 @@ public class LocalMusicProvider {
         LogHelper.e(TAG, "[retrieveMedia start]");
 
         songList.clear();
-        //load list from file
-        String message = read_record("Default");
+        localSongList.clear();
 
-        if (message != null && message.length() > 0) {
-            String msg[] = message.split("\\|");
-            if (msg.length > 0) {
+        //get local dir
+        File file = get_local_dir();
 
-                for (int i=0; i<msg.length;i++) {
-                    String s = getAudioInfo(msg[i]);
+        //load list from dir
 
+        File[] dirs = file.listFiles();
+
+        for (File children : dirs)
+        {
+            Log.d(TAG, "["+children.getAbsolutePath()+"]");
+            File chk = new File(children.getAbsolutePath());
+            if (chk.exists() && chk.isDirectory()) {
+                Log.e(TAG, "<Dir>");
+            } else if (chk.isFile()){
+                Log.e(TAG, " <File>");
+
+                String message = read_record_local(chk.getName());
+                String mediaId = chk.getName();
+                localSongList.put(mediaId, new ArrayList<Song>());
+
+                if (message != null && message.length() > 0) {
+                    String msg[] = message.split("\\|");
+                    if (msg.length > 0) {
+
+                        for (int i=0; i<msg.length;i++) {
+                            Song song = getAudioInfo(msg[i], chk.getName());
+                            localSongList.get(mediaId).add(song);
+                            LogHelper.e(TAG, "Add song "+song.getName()+" to "+mediaId);
+                        }
+                    }
                 }
+
+            } else {
+                Log.e(TAG, "Unknown error(1)");
             }
         }
 
+        LogHelper.e(TAG, "=== localSongList start ===");
+
+        Object[] keyArray =  localSongList.keySet().toArray();
+
+        for (int i=0; i<keyArray.length; i++) {
+            String keyString = keyArray[i].toString();
+
+            LogHelper.e(TAG, "key["+i+"] = "+keyArray[i].toString());
+
+            if (localSongList.get(keyString) != null) {
+                for (int j=0;j<localSongList.get(keyString).size(); j++) {
+                    LogHelper.e(TAG, " item["+j+"] = "+localSongList.get(keyString).get(j).getPath());
+                }
+            }
+
+
+        }
+
+
+        LogHelper.e(TAG, "=== localSongList  end  ===");
 
         switch (mCurrentState)
         {
@@ -352,14 +407,29 @@ public class LocalMusicProvider {
             //mediaItems.add(createBrowsableMediaItemForUser("Metal"));
 
         } else if (MEDIA_ID_MUSICS_BY_JAMCAST.equals(mediaId)) {
+
+            LogHelper.e(TAG, "mediaId equals "+MEDIA_ID_MUSICS_BY_JAMCAST);
+
             for (String genre : getGenres()) {
                 mediaItems.add(createBrowsableMediaItemForGenre(genre, resources));
             }
 
         } else if (mediaId.startsWith(MEDIA_ID_MUSICS_BY_JAMCAST)) {
+            LogHelper.e(TAG, "mediaId starts with "+MEDIA_ID_MUSICS_BY_JAMCAST);
+
             String genre = MediaIDHelper.getHierarchy(mediaId)[1];
             for (MediaMetadataCompat metadata : getMusicsByGenre(genre)) {
                 mediaItems.add(createMediaItem(metadata));
+            }
+
+        } else if (findMediaIdInlocalSongList(mediaId)) {
+            LogHelper.e(TAG, "Found "+mediaId+" in localSongList");
+
+            for (int i=0; i<localSongList.get(mediaId).size(); i++) {
+
+                mediaItems.add(createMediaItemBySong(localSongList.get(mediaId).get(i), mediaId));
+
+
             }
 
         } else {
@@ -434,9 +504,56 @@ public class LocalMusicProvider {
 
     }
 
-    private String getAudioInfo(String filePath) {
+    private MediaBrowserCompat.MediaItem createMediaItemBySong(Song song, String mediaId) {
+        // Since mediaMetadata fields are immutable, we need to create a copy, so we
+        // can set a hierarchy-aware mediaID. We will need to know the media hierarchy
+        // when we get a onPlayFromMusicID call, so we can create the proper queue based
+        // on where the music was selected from (by artist, by genre, random, etc)
+
+        String title = song.getName();
+        String album = "";
+        String artist = "";
+        String genre_input = "user";
+        String source = song.getPath();
+        String iconUrl = "";
+        int trackNumber = 0;
+        int totalTrackCount = 1;
+        int duration = (int) song.getDuration_u() / 1000; // ms
+
+        String id = String.valueOf(source.hashCode());
+
+        MediaMetadataCompat metadata = new MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, id)
+                .putString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE, source)
+
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, album)
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration)
+                .putString(MediaMetadataCompat.METADATA_KEY_GENRE, genre_input)
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, iconUrl)
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, trackNumber)
+                .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, totalTrackCount)
+                .build();
+
+        String genre = metadata.getString(MediaMetadataCompat.METADATA_KEY_GENRE);
+        String hierarchyAwareMediaID = createMediaID(
+                metadata.getDescription().getMediaId(), mediaId, genre);
+
+        LogHelper.e(TAG, "createMediaItem id = "+hierarchyAwareMediaID);
+
+        MediaMetadataCompat copy = new MediaMetadataCompat.Builder(metadata)
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, hierarchyAwareMediaID)
+                .build();
+        return new MediaBrowserCompat.MediaItem(copy.getDescription(),
+                MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
+
+    }
+
+    private Song getAudioInfo(String filePath, String listName) {
         Log.e(TAG, "<getAudioInfo>");
         String infoMsg = null;
+        Song song = null;
         boolean hasFrameRate = false;
 
         MediaExtractor mex = new MediaExtractor();
@@ -474,7 +591,7 @@ public class LocalMusicProvider {
                     Log.d(TAG, "sample rate: " + mf.getInteger(MediaFormat.KEY_SAMPLE_RATE));
 
                     if (infoMsg != null) {
-                        Song song = new Song();
+                        song = new Song();
                         song.setName(file.getName());
                         song.setPath(file.getAbsolutePath());
                         //song.setDuration((int)(mf.getLong(MediaFormat.KEY_DURATION)/1000));
@@ -483,7 +600,8 @@ public class LocalMusicProvider {
                         song.setSample_rate(mf.getInteger(MediaFormat.KEY_SAMPLE_RATE));
                         song.setMark_a(0);
                         song.setMark_b((int) (mf.getLong(MediaFormat.KEY_DURATION) / 1000));
-                        songList.add(song);
+                        //songList.add(song);
+
 
                     }
                 } else if (infoMsg.contains("video")) { //video
@@ -532,10 +650,41 @@ public class LocalMusicProvider {
 
 
 
-        return infoMsg;
+        return song;
     }
 
-    public void addList(String title) {
+    private boolean findMediaIdInlocalSongList(String mediaId) {
+        boolean found = false;
 
+        Object[] keyArray =  localSongList.keySet().toArray();
+        for (int i=0; i<keyArray.length; i++) {
+            String keyString = keyArray[i].toString();
+
+            if (keyString.equals(mediaId)) {
+                found = true;
+                break;
+            }
+        }
+
+        /*
+        Object[] keyArray =  localSongList.keySet().toArray();
+
+        for (int i=0; i<keyArray.length; i++) {
+            String keyString = keyArray[i].toString();
+
+            LogHelper.e(TAG, "key["+i+"] = "+keyArray[i].toString());
+
+            if (localSongList.get(keyString) != null) {
+                for (int j=0;j<localSongList.get(keyString).size(); j++) {
+                    LogHelper.e(TAG, " item["+j+"] = "+localSongList.get(keyString).get(j).getPath());
+                }
+            }
+
+
+        }
+         */
+
+
+        return found;
     }
 }

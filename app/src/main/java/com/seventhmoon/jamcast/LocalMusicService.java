@@ -27,6 +27,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.seventhmoon.jamcast.data.Constants;
 import com.seventhmoon.jamcast.data.PlayListItem;
+import com.seventhmoon.jamcast.data.Song;
 import com.seventhmoon.jamcast.model.LocalMusicProvider;
 import com.seventhmoon.jamcast.persistence.PlayList;
 import com.seventhmoon.jamcast.playback.LocalCastPlayback;
@@ -46,6 +47,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.seventhmoon.jamcast.data.initData.db;
+import static com.seventhmoon.jamcast.data.initData.localSongList;
 import static com.seventhmoon.jamcast.data.initData.playList;
 import static com.seventhmoon.jamcast.data.initData.songList;
 import static com.seventhmoon.jamcast.data.initData.songListChanged;
@@ -133,7 +135,7 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
                     }
                 });
 
-        LocalLocalPlayBack playback = new LocalLocalPlayBack(this, mLocalMusicProvider);
+        final LocalLocalPlayBack playback = new LocalLocalPlayBack(this, mLocalMusicProvider);
         mLocalPlaybackManager = new LocalPlaybackManager(this, getResources(), mLocalMusicProvider, localQueueManager,
                 playback);
 
@@ -187,7 +189,7 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
 
                 if (intent.getAction() != null) {
                     if (intent.getAction().equalsIgnoreCase(Constants.ACTION.ACTION_USER_LIST_ADD)) {
-                        Log.d(TAG, "receive ADD_SONG_LIST_COMPLETE !");
+                        Log.d(TAG, "receive ACTION_USER_LIST_ADD !");
 
                         String title = intent.getStringExtra("TITLE");
                         String desc = intent.getStringExtra("DESC");
@@ -209,7 +211,12 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
                             //item.setTitle(title);
                             //item.setDesc(desc);
                             playList.add(item);
+
+                            localSongList.put(item.getTitle(), new ArrayList<Song>());
+
                             db.playListDao().insert(item);
+
+                            LogHelper.e(TAG, "playList.size = "+playList.size()+", localSongList.size = "+localSongList.size());
                         }
 
                         //write to database
@@ -225,7 +232,30 @@ public class LocalMusicService extends MediaBrowserServiceCompat implements
 
 
                     } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.ACTION_USER_LIST_DELETE)) {
+                        Log.d(TAG, "receive ACTION_USER_LIST_DELETE !");
 
+                        String string_index = intent.getStringExtra("INDEX");
+
+                        Log.d(TAG, "index = "+string_index);
+
+                        int index = Integer.valueOf(string_index);
+
+                        PlayList item = playList.get(index-1);
+
+                        db.playListDao().delete(item);
+
+                        localSongList.remove(item.getTitle());
+
+
+
+
+
+
+                        playList.remove(index-1);
+
+                        LogHelper.e(TAG, "playList.size = "+playList.size()+", localSongList.size = "+localSongList.size());
+
+                        notifyChildrenChanged(MEDIA_ID_ROOT);
                     }
                 }
             }

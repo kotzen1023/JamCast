@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -44,6 +45,7 @@ import com.seventhmoon.jamcast.data.Constants;
 import com.seventhmoon.jamcast.data.FileChooseItem;
 import com.seventhmoon.jamcast.data.initData;
 import com.seventhmoon.jamcast.persistence.PlayListDatabase;
+import com.seventhmoon.jamcast.service.SaveFileListService;
 import com.seventhmoon.jamcast.utils.LogHelper;
 
 import java.io.File;
@@ -55,6 +57,7 @@ import java.util.Map;
 import static com.seventhmoon.jamcast.data.FileOperation.clear_record;
 import static com.seventhmoon.jamcast.data.FileOperation.init_folder_and_files;
 
+import static com.seventhmoon.jamcast.data.initData.addSongList;
 import static com.seventhmoon.jamcast.data.initData.db;
 import static com.seventhmoon.jamcast.data.initData.playList;
 import static com.seventhmoon.jamcast.data.initData.songList;
@@ -77,8 +80,8 @@ public class ActionBarCastActivity extends AppCompatActivity {
     private MenuItem mMediaRouteMenuItem;
     private static Toolbar mToolbar;
     private Menu mMenu;
-    public static MenuItem menuItemAdd;
-    public static MenuItem menuItemAddList;
+    //public static MenuItem menuItemAdd;
+    //public static MenuItem menuItemAddList;
     public static MenuItem menuMore;
     public static MenuItem menuItemSelectAll;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -236,14 +239,52 @@ public class ActionBarCastActivity extends AppCompatActivity {
             }
         }
 
+        /*IntentFilter filter;
 
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (intent.getAction() != null) {
+                    if (intent.getAction().equalsIgnoreCase(Constants.ACTION.ACTION_USER_LIST_ADD_SONG_SHOW)) {
+                        Log.d(TAG, "receive ACTION_USER_LIST_ADD_SONG_SHOW !");
+
+                        menuItemAdd.setVisible(true);
+                        menuItemAddList.setVisible(false);
+                    } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.ACTION_USER_LIST_ADD_SONG_HIDE)) {
+                        Log.d(TAG, "receive ACTION_USER_LIST_ADD_SONG_HIDE !");
+
+                        menuItemAdd.setVisible(false);
+                        menuItemAddList.setVisible(true);
+                    }
+                }
+            }
+        };
+
+        if (!isRegister) {
+            filter = new IntentFilter();
+            filter.addAction(Constants.ACTION.ACTION_USER_LIST_ADD_SONG_SHOW);
+            filter.addAction(Constants.ACTION.ACTION_USER_LIST_ADD_SONG_HIDE);
+            registerReceiver(mReceiver, filter);
+            isRegister = true;
+            Log.d(TAG, "registerReceiver mReceiver");
+        }*/
     }
 
     @Override
     protected void onDestroy() {
         Log.e(TAG, "ActionBarCastActivity onDestroy");
 
-
+        /*if (isRegister && mReceiver != null) {
+            try {
+                unregisterReceiver(mReceiver);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            isRegister = false;
+            mReceiver = null;
+            Log.d(TAG, "unregisterReceiver mReceiver");
+        }*/
 
         super.onDestroy();
     }
@@ -310,29 +351,32 @@ public class ActionBarCastActivity extends AppCompatActivity {
                     menu, R.id.media_route_menu_item);
         }
 
-        menuItemAdd = menu.findItem(R.id.action_add);
-        menuItemAddList = menu.findItem(R.id.action_add_list);
+        initData.globalMenuItemAdd = menu.findItem(R.id.action_add);
+        initData.globalMenuItemAddList = menu.findItem(R.id.action_add_list);
+
+
+
         menuMore = menu.findItem(R.id.action_settings);
         menuItemSelectAll = menu.findItem(R.id.action_selectAll);
         switch (activity_called) {
             case 0:
                 menuMore.setVisible(false);
-                menuItemAddList.setVisible(false);
+                initData.globalMenuItemAddList.setVisible(false);
                 menuItemSelectAll.setVisible(false);
                 break;
             case 1:
                 menuMore.setVisible(false);
-                menuItemAddList.setVisible(false);
+                initData.globalMenuItemAddList.setVisible(false);
                 menuItemSelectAll.setVisible(false);
                 break;
             case 2:
                 menuMore.setVisible(true);
-                menuItemAddList.setVisible(true);
+                initData.globalMenuItemAddList.setVisible(true);
                 menuItemSelectAll.setVisible(false);
                 break;
             case 3:
                 menuMore.setVisible(false);
-                menuItemAddList.setVisible(false);
+                initData.globalMenuItemAddList.setVisible(false);
                 menuItemSelectAll.setVisible(true);
                 break;
         }
