@@ -36,7 +36,7 @@ public class LocalQueueHelper {
 
         String categoryType = hierarchy[0];
         String categoryValue = hierarchy[1];
-        LogHelper.d(TAG, "Creating playing queue for ", categoryType, ",  ", categoryValue);
+        LogHelper.e(TAG, "Creating playing queue for ", categoryType, ",  ", categoryValue);
 
         Iterable<MediaMetadataCompat> tracks = null;
         // This sample only supports genre and by_search category types.
@@ -45,7 +45,7 @@ public class LocalQueueHelper {
         } else if (categoryType.equals(MEDIA_ID_MUSICS_BY_SEARCH)) {
             tracks = localMusicProvider.searchMusicBySongTitle(categoryValue);
         } else {
-
+            tracks = localMusicProvider.getMusicsBylocalSongList(mediaId);
         }
 
         if (tracks == null) {

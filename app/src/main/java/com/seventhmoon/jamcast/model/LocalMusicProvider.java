@@ -132,11 +132,21 @@ public class LocalMusicProvider {
     }
 
     public List<MediaMetadataCompat> getMusicsBylocalSongList(String mediaId) {
-        ArrayList<MediaMetadataCompat> result = new ArrayList<>();
+        //ArrayList<MediaMetadataCompat> result = new ArrayList<>();
+        LogHelper.e(TAG, "=== getMusicsBylocalSongList start ===");
+        for (String s : mMusicListByJamcast.keySet()) {
+            LogHelper.e(TAG, "key = "+s);
+            if (mMusicListByJamcast.get(s) != null) {
+                for (int j=0; j<mMusicListByJamcast.get(s).size(); j++) {
+                    LogHelper.d(TAG, "m = "+mMusicListByJamcast.get(s).get(j));
+                }
+            }
 
 
+        }
+        LogHelper.e(TAG, "=== getMusicsBylocalSongList end ===");
 
-        return result;
+        return mMusicListByJamcast.get(mediaId);
     }
 
     public MediaMetadataCompat getMusic(String musicId) {
